@@ -25,16 +25,13 @@ public class LevelBuilder : MonoBehaviour
 
         Vector2 cellSize = level.CellSize;
 
-        float xOffset = width * cellSize.x / 2.0f;
-        float zOffset = height * cellSize.y / 2.0f;
-
         foreach (KeyValuePair<Vector2Int, Cell> cell in level)
         {
             GameObject newCell = cell.Value.CellObject;
             Vector3 newPosition = new Vector3(
-                transform.position.x + cell.Key.x * cellSize.x - xOffset,
+                transform.position.x + cell.Key.x * cellSize.x,
                 0.0f,
-                transform.position.y + cell.Key.y * cellSize.y - zOffset
+                transform.position.y + cell.Key.y * cellSize.y
             );
             Instantiate(newCell, newPosition, transform.rotation);
         }
@@ -43,23 +40,31 @@ public class LevelBuilder : MonoBehaviour
     private Level GenerateLevel()
     {
         Level result = new Level();
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < height; ++j)
-            {
-                Cell cell;
-                if (Random.value > 0.5)
-                {
-                    cell = new Cell(floor);
-                }
-                else
-                {
-                    cell = new Cell(wall);
-                }
-                result.AddCell(new Vector2Int(i, j), cell);
-            }
-        }
+        PlaceRoom(result, new RectInt(1, 1, 4, 4));
         return result;
+    }
+
+    private void PlaceRoom(Level level, RectInt position)
+    {
+        Cell floorCell = new Cell(floor);
+        Cell wallCell = new Cell(wall);
+
+        for (int i = position.xMin + 1; i < position.xMax; ++i)
+        {
+            level.AddCell(new Vector2Int(i, position.yMin), wallCell);
+            level.AddCell(new Vector2Int(i, position.yMax), wallCell);
+        }
+
+        for (int i = position.yMin + 1; i < position.yMax; ++i)
+        {
+            level.AddCell(new Vector2Int(position.xMin, i), wallCell);
+            level.AddCell(new Vector2Int(position.xMax, i), wallCell);
+        }
+
+        level.AddCell(new Vector2Int(position.xMin, position.yMin), wallCell);
+        level.AddCell(new Vector2Int(position.xMin, position.yMax), wallCell);
+        level.AddCell(new Vector2Int(position.xMax, position.yMin), wallCell);
+        level.AddCell(new Vector2Int(position.xMax, position.yMax), wallCell);
     }
 
     class Level : IEnumerable
