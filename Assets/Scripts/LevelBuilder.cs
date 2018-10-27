@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,6 +42,8 @@ public class LevelBuilder : MonoBehaviour
     {
         Level result = new Level();
         PlaceRoom(result, new RectInt(1, 1, 4, 4));
+        PlaceRoom(result, new RectInt(-5, -5, 2, 2));
+        PlaceRoom(result, new RectInt(5, -3, 10, 5));
         return result;
     }
 
@@ -65,6 +68,14 @@ public class LevelBuilder : MonoBehaviour
         level.AddCell(new Vector2Int(position.xMin, position.yMax), wallCell);
         level.AddCell(new Vector2Int(position.xMax, position.yMin), wallCell);
         level.AddCell(new Vector2Int(position.xMax, position.yMax), wallCell);
+
+        for (int i = position.xMin + 1; i < position.xMax; ++i)
+        {
+            for (int j = position.yMin + 1; j < position.yMax; ++j)
+            {
+                level.AddCell(new Vector2Int(i, j), floorCell);
+            }
+        }
     }
 
     class Level : IEnumerable
@@ -84,7 +95,14 @@ public class LevelBuilder : MonoBehaviour
 
         public void AddCell(Vector2Int position, Cell cell)
         {
-            cells.Add(position, cell);
+            try
+            {
+                cells.Add(position, cell);
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogWarningFormat("Could not add cell at {0}", position);
+            }
 
             // TODO: optimize
             Vector3 size = cell.CellObject.GetComponent<Renderer>().bounds.size;
