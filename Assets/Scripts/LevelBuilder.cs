@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
-
     public GameObject floor;
     public int width;
     public int height;
