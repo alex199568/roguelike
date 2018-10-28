@@ -7,7 +7,6 @@ public class LevelBuilder : MonoBehaviour
 {
 
     public GameObject floor;
-    public GameObject wall;
     public int width;
     public int height;
 
@@ -52,31 +51,71 @@ public class LevelBuilder : MonoBehaviour
     private Level GenerateLevel()
     {
         Level result = new Level();
-        PlaceRoom(result, new RectInt(0, 0, 24, 24));
+        RectInt room1Position = new RectInt(0, 0, 6, 4);
+        RectInt room2Position = new RectInt(12, 8, 7, 10);
+        RectInt room3Position = new RectInt(1, 12, 5, 3);
+        RectInt room4Position = new RectInt(3, 10, 8, 15);
+        PlaceRoom(result, room1Position);
+        PlaceRoom(result, room2Position);
+        PlaceRoom(result, room3Position);
+        PlaceRoom(result, room4Position);
+        ConnectWithPassage(result, room1Position, room2Position);
+        ConnectWithPassage(result, room2Position, room3Position);
+        ConnectWithPassage(result, room3Position, room1Position);
         return result;
+    }
+
+    private void ConnectWithPassage(Level level, RectInt room1, RectInt room2)
+    {
+        System.Random random = new System.Random();
+        Cell floorCell = new Cell(floor);
+
+        int startX = random.Next(room1.xMin + 1, room1.xMax - 1);
+        int startY = random.Next(room1.yMin + 1, room1.yMax - 1);
+        int endX = random.Next(room2.xMin + 1, room2.xMax - 1);
+        int endY = random.Next(room2.yMin + 1, room2.yMax - 1);
+
+        int stepX = startX < endX ? 1 : -1;
+        int stepY = startY < endY ? 1 : -1;
+
+        int i = startX;
+        int j = startY;
+        while (true)
+        {
+            bool xChanged = false;
+            if (Math.Abs(startX - i) < Math.Abs(startX - endX))
+            {
+                i += stepX;
+                xChanged = true;
+            }
+
+            bool yChanged = false;
+            if (Math.Abs(startY - j) < Math.Abs(startY - endY))
+            {
+                j += stepY;
+                yChanged = true;
+            }
+
+            if (xChanged && yChanged)
+            {
+                level.AddCell(i, j, floorCell);
+                level.AddCell(i - stepX, j, floorCell);
+                level.AddCell(i, j - stepY, floorCell);
+            }
+            else if (xChanged || yChanged)
+            {
+                level.AddCell(i, j, floorCell);
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
     private void PlaceRoom(Level level, RectInt position)
     {
-        Cell floorCell = new Cell(floor, CellType.Floor);
-        Cell wallCell = new Cell(wall, CellType.Wall);
-
-        for (int i = position.xMin + 1; i < position.xMax; ++i)
-        {
-            level.AddCell(i, position.yMin, wallCell);
-            level.AddCell(i, position.yMax, wallCell);
-        }
-
-        for (int i = position.yMin + 1; i < position.yMax; ++i)
-        {
-            level.AddCell(position.xMin, i, wallCell);
-            level.AddCell(position.xMax, i, wallCell);
-        }
-
-        level.AddCell(position.xMin, position.yMin, wallCell);
-        level.AddCell(position.xMin, position.yMax, wallCell);
-        level.AddCell(position.xMax, position.yMin, wallCell);
-        level.AddCell(position.xMax, position.yMax, wallCell);
+        Cell floorCell = new Cell(floor);
 
         for (int i = position.xMin + 1; i < position.xMax; ++i)
         {
@@ -90,12 +129,6 @@ public class LevelBuilder : MonoBehaviour
     class Level
     {
         private ArrayGrid<Cell> cellsGrid = new ArrayGrid<Cell>();
-        private Vector2 cellSize;
-
-        public Vector2 CellSize
-        {
-            get { return cellSize; }
-        }
 
         public bool IsEmpty
         {
@@ -120,7 +153,7 @@ public class LevelBuilder : MonoBehaviour
             }
             catch (IndexOutOfRangeException)
             {
-                Debug.LogWarningFormat("could not add cell at {0}, {1}", x, y);
+                Debug.LogWarning($"could not add cell at {x}, {y}");
             }
         }
 
@@ -133,27 +166,15 @@ public class LevelBuilder : MonoBehaviour
     class Cell
     {
         private GameObject cellObject;
-        private CellType cellType;
-
-        public CellType Type
-        {
-            get { return cellType; }
-        }
 
         public GameObject CellObject
         {
             get { return cellObject; }
         }
 
-        public Cell(GameObject cellObject, CellType cellType)
+        public Cell(GameObject cellObject)
         {
-            this.cellType = cellType;
             this.cellObject = cellObject;
         }
-    }
-
-    enum CellType
-    {
-        Floor, Wall
     }
 }
