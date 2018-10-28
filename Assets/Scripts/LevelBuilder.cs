@@ -29,18 +29,20 @@ public class LevelBuilder : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < level.Width; ++i)
+        for (int i = level.XMin; i < level.XMax; ++i)
         {
-            for (int j = 0; j < level.Height; ++j)
+            for (int j = level.YMin; j < level.YMax; ++j)
             {
                 Cell cell = level.GetCellAt(i, j);
                 if (cell != null)
                 {
                     GameObject newCell = cell.CellObject;
-                    Vector3 newPosition = new Vector3(
+                    Vector3 newPosition = new Vector3
+                    (
                     transform.position.x + i * cellWidth,
                     0.0f,
-                    transform.position.y + j * cellHeight);
+                    transform.position.y + j * cellHeight
+                    );
                     Instantiate(newCell, newPosition, transform.rotation);
                 }
             }
@@ -50,17 +52,27 @@ public class LevelBuilder : MonoBehaviour
     private Level GenerateLevel()
     {
         Level result = new Level();
-        RectInt room1Position = new RectInt(0, 0, 6, 4);
-        RectInt room2Position = new RectInt(12, 8, 7, 10);
-        RectInt room3Position = new RectInt(1, 12, 5, 3);
-        RectInt room4Position = new RectInt(3, 10, 8, 15);
-        PlaceRoom(result, room1Position);
-        PlaceRoom(result, room2Position);
-        PlaceRoom(result, room3Position);
-        PlaceRoom(result, room4Position);
-        ConnectWithPassage(result, room1Position, room2Position);
-        ConnectWithPassage(result, room2Position, room3Position);
-        ConnectWithPassage(result, room3Position, room1Position);
+        var rooms = new List<RectInt>()
+        {
+            new RectInt(21, 21, 14, 14),
+            new RectInt(-26, 21, 14, 14),
+            new RectInt(-26, -26, 14, 14),
+            new RectInt(21, -26, 14, 14)
+        };
+
+        foreach (var room in rooms)
+        {
+            PlaceRoom(result, room);
+        }
+
+        ConnectWithPassage(result, rooms[0], rooms[1]);
+        ConnectWithPassage(result, rooms[1], rooms[2]);
+        ConnectWithPassage(result, rooms[2], rooms[3]);
+        ConnectWithPassage(result, rooms[3], rooms[0]);
+
+        ConnectWithPassage(result, rooms[0], rooms[2]);
+        ConnectWithPassage(result, rooms[1], rooms[3]);
+
         return result;
     }
 
@@ -125,55 +137,4 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
-    class Level
-    {
-        private ArrayGrid<Cell> cellsGrid = new ArrayGrid<Cell>();
-
-        public bool IsEmpty
-        {
-            get { return cellsGrid.IsEmpty; }
-        }
-
-        public int Width
-        {
-            get { return cellsGrid.Width; }
-        }
-
-        public int Height
-        {
-            get { return cellsGrid.Height; }
-        }
-
-        public void AddCell(int x, int y, Cell cell)
-        {
-            try
-            {
-                cellsGrid.Set(x, y, cell);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Debug.LogWarning($"could not add cell at {x}, {y}");
-            }
-        }
-
-        public Cell GetCellAt(int x, int y)
-        {
-            return cellsGrid.Get(x, y);
-        }
-    }
-
-    class Cell
-    {
-        private GameObject cellObject;
-
-        public GameObject CellObject
-        {
-            get { return cellObject; }
-        }
-
-        public Cell(GameObject cellObject)
-        {
-            this.cellObject = cellObject;
-        }
-    }
 }
