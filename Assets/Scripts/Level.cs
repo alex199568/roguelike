@@ -58,7 +58,16 @@ class Level
 
     public Cell GetCellAt(int x, int y)
     {
-        return ResolveGrid(x, y).Get(Math.Abs(x), Math.Abs(y));
+        try
+        {
+            return ResolveGrid(x, y).Get(Math.Abs(x), Math.Abs(y));
+        }
+        catch (IndexOutOfRangeException)
+        {
+            // ...
+        }
+
+        return null;
     }
 
     private ArrayGrid<Cell> ResolveGrid(int x, int y)
