@@ -33,11 +33,6 @@ public class ArrayGrid<E>
         return grid[x, y];
     }
 
-    public override string ToString()
-    {
-        return String.Format("width: {0}, height: {1}, x_capacity: {2}, y_capacity: {3}", width, height, grid.GetLength(0), grid.GetLength(1));
-    }
-
     public bool IsEmpty
     {
         get { return width == 0 || height == 0; }

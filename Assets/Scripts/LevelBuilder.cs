@@ -8,15 +8,26 @@ public class LevelBuilder : MonoBehaviour
     public GameObject floor;
     public int width;
     public int height;
+    public int MIN_ROOM_SIZE = 2;
+    public int MAX_ROOM_SIZE = 8;
+    public int MAX_ROOM_DISPLACEMENT = 5;
 
     private float cellWidth;
     private float cellHeight;
+
+    private Vector2Int xBounds;
+    private Vector2Int yBounds;
+
+    private System.Random random = new System.Random();
 
     void Start()
     {
         Vector3 size = floor.GetComponent<Renderer>().bounds.size;
         cellWidth = size.x;
         cellHeight = size.z;
+
+        xBounds = new Vector2Int(-width / 2, width / 2);
+        yBounds = new Vector2Int(-height / 2, height / 2);
 
         Level level = GenerateLevel();
         BuildLevel(level);
@@ -29,18 +40,20 @@ public class LevelBuilder : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < level.Width; ++i)
+        for (int i = level.XMin; i < level.XMax; ++i)
         {
-            for (int j = 0; j < level.Height; ++j)
+            for (int j = level.YMin; j < level.YMax; ++j)
             {
                 Cell cell = level.GetCellAt(i, j);
                 if (cell != null)
                 {
                     GameObject newCell = cell.CellObject;
-                    Vector3 newPosition = new Vector3(
+                    Vector3 newPosition = new Vector3
+                    (
                     transform.position.x + i * cellWidth,
                     0.0f,
-                    transform.position.y + j * cellHeight);
+                    transform.position.y + j * cellHeight
+                    );
                     Instantiate(newCell, newPosition, transform.rotation);
                 }
             }
@@ -50,23 +63,346 @@ public class LevelBuilder : MonoBehaviour
     private Level GenerateLevel()
     {
         Level result = new Level();
-        RectInt room1Position = new RectInt(0, 0, 6, 4);
-        RectInt room2Position = new RectInt(12, 8, 7, 10);
-        RectInt room3Position = new RectInt(1, 12, 5, 3);
-        RectInt room4Position = new RectInt(3, 10, 8, 15);
-        PlaceRoom(result, room1Position);
-        PlaceRoom(result, room2Position);
-        PlaceRoom(result, room3Position);
-        PlaceRoom(result, room4Position);
-        ConnectWithPassage(result, room1Position, room2Position);
-        ConnectWithPassage(result, room2Position, room3Position);
-        ConnectWithPassage(result, room3Position, room1Position);
+
+        var rooms = GenerateRooms();
+
+        foreach (var room in rooms)
+        {
+            PlaceRoom(result, room);
+        }
+
+        ConnectRooms(result, rooms);
+
         return result;
+    }
+
+    private void ConnectRooms(Level level, List<RectInt> rooms)
+    {
+        if (rooms.Count == 0)
+        {
+            return;
+        }
+
+        List<RectInt> disconnectedRooms = new List<RectInt>();
+        disconnectedRooms.AddRange(rooms);
+
+        List<RectInt> connectedRooms = new List<RectInt>();
+        connectedRooms.Add(rooms[random.Next(rooms.Count)]);
+
+        while (disconnectedRooms.Count > 0)
+        {
+            var disconnectedIndex = random.Next(disconnectedRooms.Count);
+            var connectedIndex = random.Next(connectedRooms.Count);
+
+            var disconnectedRoom = disconnectedRooms[disconnectedIndex];
+            var connectedRoom = connectedRooms[connectedIndex];
+
+            ConnectWithPassage(level, disconnectedRoom, connectedRoom);
+
+            disconnectedRooms.RemoveAt(disconnectedIndex);
+            connectedRooms.Add(disconnectedRoom);
+        }
+    }
+
+    private List<RectInt> GenerateRooms()
+    {
+        var result = new List<RectInt>();
+
+        GenerateRoomsRec(new Vector2Int(0, 0), result);
+
+        return result;
+    }
+
+    private void GenerateRoomsRec(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var room = GenerateRoom(position, generatedRoom);
+        result.Add(room);
+
+        GenerateRoomsRecNorth(position, result);
+        GenerateRoomsRecNorthEast(position, result);
+        GenerateRoomsRecEast(position, result);
+        GenerateRoomsRecSouthEast(position, result);
+        GenerateRoomsRecSouth(position, result);
+        GenerateRoomsRecSouthWest(position, result);
+        GenerateRoomsRecWest(position, result);
+        GenerateRoomsRecNorthWest(position, result);
+    }
+
+    private void GenerateRoomsRecNorth(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x, position.y + roomSpace);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthWest,
+            GenerateRoomsRecWest,
+            GenerateRoomsRecSouthWest
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecNorthEast(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x + roomSpace, position.y + roomSpace);
+
+        var room = GenerateRoom(position, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthEast,
+            GenerateRoomsRecEast,
+            GenerateRoomsRecSouthEast
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecEast(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x + roomSpace, position.y);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthEast,
+            GenerateRoomsRecEast,
+            GenerateRoomsRecSouthEast
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecSouthEast(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x + roomSpace, position.y - roomSpace);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthEast,
+            GenerateRoomsRecEast,
+            GenerateRoomsRecSouthEast
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecSouth(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x, position.y - roomSpace);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthWest,
+            GenerateRoomsRecWest,
+            GenerateRoomsRecSouthWest
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecSouthWest(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x - roomSpace, position.y - roomSpace);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthWest,
+            GenerateRoomsRecWest,
+            GenerateRoomsRecSouthWest
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecWest(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x - roomSpace, position.y);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthWest,
+            GenerateRoomsRecWest,
+            GenerateRoomsRecSouthWest
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private void GenerateRoomsRecNorthWest(Vector2Int position, List<RectInt> result)
+    {
+        if (!CheckPosition(position))
+        {
+            return;
+        }
+
+        var generatedRoom = PreGenerateRoom();
+        var roomSpace = NextRoomDistance(generatedRoom);
+        var newPosition = new Vector2Int(position.x - roomSpace, position.y + roomSpace);
+
+        var room = GenerateRoom(newPosition, generatedRoom);
+        result.Add(room);
+
+        var nextRoomsMethods = new List<Action<Vector2Int, List<RectInt>>>()
+        {
+            GenerateRoomsRecNorthWest,
+            GenerateRoomsRecWest,
+            GenerateRoomsRecSouthWest
+        };
+
+        foreach (var generationMethod in nextRoomsMethods)
+        {
+            GenerateRoomsInDirection(newPosition, result, generationMethod);
+        }
+    }
+
+    private int NextRoomDistance(GeneratedRoom generatedRoom)
+    {
+        return Math.Max(generatedRoom.width, generatedRoom.height) * 2;
+    }
+
+    private void GenerateRoomsInDirection
+    (
+        Vector2Int position,
+        List<RectInt> result,
+        Action<Vector2Int, List<RectInt>> generationMethod
+         )
+    {
+        if (random.Next(2) == 1)
+        {
+            generationMethod(position, result);
+        }
+    }
+
+    private bool CheckPosition(Vector2Int position)
+    {
+        if (
+            position.x < xBounds.x || position.x > xBounds.y ||
+            position.y < yBounds.x || position.y > yBounds.y
+            )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private RectInt GenerateRoom(Vector2Int position, GeneratedRoom from)
+    {
+        return new RectInt
+        (
+            position.x + from.xDisplacement - from.width / 2,
+            position.y + from.yDisplacement - from.height / 2,
+            from.width,
+            from.height
+            );
+    }
+
+    private GeneratedRoom PreGenerateRoom()
+    {
+        return new GeneratedRoom(
+            random.Next(MIN_ROOM_SIZE, MAX_ROOM_SIZE),
+            random.Next(MIN_ROOM_SIZE, MAX_ROOM_SIZE),
+            random.Next(-MAX_ROOM_DISPLACEMENT, MAX_ROOM_DISPLACEMENT),
+            random.Next(-MAX_ROOM_DISPLACEMENT, MAX_ROOM_DISPLACEMENT)
+        );
     }
 
     private void ConnectWithPassage(Level level, RectInt room1, RectInt room2)
     {
-        System.Random random = new System.Random();
         Cell floorCell = new Cell(floor);
 
         int startX = random.Next(room1.xMin + 1, room1.xMax - 1);
@@ -125,55 +461,25 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
-    class Level
+    private struct GeneratedRoom
     {
-        private ArrayGrid<Cell> cellsGrid = new ArrayGrid<Cell>();
+        public int width;
+        public int height;
+        public int xDisplacement;
+        public int yDisplacement;
 
-        public bool IsEmpty
+        public GeneratedRoom
+        (
+            int width,
+            int height,
+            int xDisplacement,
+            int yDisplacement
+        )
         {
-            get { return cellsGrid.IsEmpty; }
-        }
-
-        public int Width
-        {
-            get { return cellsGrid.Width; }
-        }
-
-        public int Height
-        {
-            get { return cellsGrid.Height; }
-        }
-
-        public void AddCell(int x, int y, Cell cell)
-        {
-            try
-            {
-                cellsGrid.Set(x, y, cell);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Debug.LogWarning($"could not add cell at {x}, {y}");
-            }
-        }
-
-        public Cell GetCellAt(int x, int y)
-        {
-            return cellsGrid.Get(x, y);
-        }
-    }
-
-    class Cell
-    {
-        private GameObject cellObject;
-
-        public GameObject CellObject
-        {
-            get { return cellObject; }
-        }
-
-        public Cell(GameObject cellObject)
-        {
-            this.cellObject = cellObject;
+            this.width = width;
+            this.height = height;
+            this.xDisplacement = xDisplacement;
+            this.yDisplacement = yDisplacement;
         }
     }
 }
