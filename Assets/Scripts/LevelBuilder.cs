@@ -71,7 +71,37 @@ public class LevelBuilder : MonoBehaviour
             PlaceRoom(result, room);
         }
 
+        ConnectRooms(result, rooms);
+
         return result;
+    }
+
+    private void ConnectRooms(Level level, List<RectInt> rooms)
+    {
+        if (rooms.Count == 0)
+        {
+            return;
+        }
+
+        List<RectInt> disconnectedRooms = new List<RectInt>();
+        disconnectedRooms.AddRange(rooms);
+
+        List<RectInt> connectedRooms = new List<RectInt>();
+        connectedRooms.Add(rooms[random.Next(rooms.Count)]);
+
+        while (disconnectedRooms.Count > 0)
+        {
+            var disconnectedIndex = random.Next(disconnectedRooms.Count);
+            var connectedIndex = random.Next(connectedRooms.Count);
+
+            var disconnectedRoom = disconnectedRooms[disconnectedIndex];
+            var connectedRoom = connectedRooms[connectedIndex];
+
+            ConnectWithPassage(level, disconnectedRoom, connectedRoom);
+
+            disconnectedRooms.RemoveAt(disconnectedIndex);
+            connectedRooms.Add(disconnectedRoom);
+        }
     }
 
     private List<RectInt> GenerateRooms()
