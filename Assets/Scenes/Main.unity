@@ -269,47 +269,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollSensitivity: 1
---- !u!1 &1678049228
+--- !u!1 &1929863173
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1678049230}
-  - component: {fileID: 1678049229}
+  - component: {fileID: 1929863175}
+  - component: {fileID: 1929863174}
   m_Layer: 0
-  m_Name: LevelBuilder
+  m_Name: MainController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1678049229
+--- !u!114 &1929863174
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1678049228}
+  m_GameObject: {fileID: 1929863173}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d1a5c495d1f73d45a59f5b1dda1b351, type: 3}
+  m_Script: {fileID: 11500000, guid: 6eb629c6543c2e6479f216986ca8c408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floor: {fileID: 1777453707702556, guid: 396d0b4bde9b7cc4c93259eca2b8196a, type: 2}
-  width: 100
-  height: 100
-  MIN_ROOM_SIZE: 5
-  MAX_ROOM_SIZE: 20
-  MAX_ROOM_DISPLACEMENT: 12
---- !u!4 &1678049230
+  LevelBuilderPrefab: {fileID: 114714053514731262, guid: b385d9b4f3adcd648ae81bdc2029dcd2,
+    type: 2}
+  LevelGeneratorPrefab: {fileID: 114168227689263298, guid: b7822a41aec790a49888a0e3469438f9,
+    type: 2}
+--- !u!4 &1929863175
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1678049228}
+  m_GameObject: {fileID: 1929863173}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 13.814756, y: 8.914799, z: 21.72998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

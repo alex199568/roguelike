@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-class Level
+public class Level
 {
     private ArrayGrid<Cell> gridI = new ArrayGrid<Cell>();
     private ArrayGrid<Cell> gridII = new ArrayGrid<Cell>();
