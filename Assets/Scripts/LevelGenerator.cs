@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-
     public int Width;
     public int Height;
     public int MinRoomSize = 2;
@@ -25,7 +23,6 @@ public class LevelGenerator : MonoBehaviour
 	
 	void Update ()
     {
-		
 	}
 
     public Level GenerateLevel()

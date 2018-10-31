@@ -1,4 +1,3 @@
-
 public class ArrayGrid<E>
 {
     private const int InitialWidth = 12;
