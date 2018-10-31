@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 public class ArrayGrid<E>
 {
     private const int InitialWidth = 12;
