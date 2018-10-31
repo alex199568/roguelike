@@ -41,4 +41,14 @@ public class LevelBuilder : MonoBehaviour
             }
         }
     }
+
+    public Vector3 LevelLocationToWorldPosition(Vector2Int levelLocation)
+    {
+        return new Vector3
+            (
+            transform.position.x + levelLocation.x * cellWidth,
+            1.0f,
+            transform.position.z + levelLocation.y * cellHeight
+            );
+    }
 }

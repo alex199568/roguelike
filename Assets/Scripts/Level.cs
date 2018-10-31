@@ -10,17 +10,7 @@ public class Level
 
     public bool IsEmpty
     {
-        get { return gridI.IsEmpty; }
-    }
-
-    public int Width
-    {
-        get { return gridI.Width; }
-    }
-
-    public int Height
-    {
-        get { return gridI.Height; }
+        get { return gridI.IsEmpty && gridII.IsEmpty && gridIII.IsEmpty && gridIV.IsEmpty; }
     }
 
     public int XMin
