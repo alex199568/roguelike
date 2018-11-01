@@ -30,6 +30,7 @@ public class LevelGenerator : MonoBehaviour
         Level result = new Level();
 
         var rooms = GenerateRooms();
+        result.Rooms = rooms;
 
         foreach (var room in rooms)
         {

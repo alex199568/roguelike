@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Level
@@ -7,6 +8,10 @@ public class Level
     private ArrayGrid<Cell> gridII = new ArrayGrid<Cell>();
     private ArrayGrid<Cell> gridIII = new ArrayGrid<Cell>();
     private ArrayGrid<Cell> gridIV = new ArrayGrid<Cell>();
+
+    private List<RectInt> rooms = new List<RectInt>();
+
+    private System.Random random = new System.Random(); // TODO: lazy
 
     public bool IsEmpty
     {
@@ -32,6 +37,22 @@ public class Level
     public int YMax
     {
         get { return Math.Max(gridI.Height, gridII.Height); }
+    }
+
+    public List<RectInt> Rooms
+    {
+        set { rooms = value; }
+        get { return rooms; }
+    }
+
+    public RectInt RandomRoom
+    {
+        get { return rooms[random.Next(rooms.Count)]; }
+    }
+
+    public void AddRoom(RectInt room)
+    {
+        rooms.Add(room);
     }
 
     public void AddCell(int x, int y, Cell cell)
