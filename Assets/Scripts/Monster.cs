@@ -21,16 +21,12 @@ public class Monster : MonoBehaviour
         set { location = value; }
     }
 
-    // Use this for initialization
     void Start()
     {
-
     }
 
-    // Update is called once per frame
     void Update()
     {
-
     }
 
     public Vector2Int Move(Level level)
