@@ -16,11 +16,9 @@ public class MainController : MonoBehaviour
     private LevelBuilder levelBuilderInstance;
     private LevelGenerator levelGeneratorInstance;
 
-    private Level level;
+    private Level.Level level;
     private Vector2Int playerLocation = new Vector2Int(0, 0);
     private Vector3 playerTargetPosition;
-
-    private List<Monster> monsters = new List<Monster>();
 
     private System.Random random = new System.Random();
 
@@ -45,10 +43,27 @@ public class MainController : MonoBehaviour
     void Update()
     {
         var playerMovement = CheckPlayerMovement();
-        if ((playerMovement.x != 0 || playerMovement.y != 0) && CheckNextMove(playerMovement))
+        if ((playerMovement.x != 0 || playerMovement.y != 0))
         {
-            playerLocation.x += playerMovement.x;
-            playerLocation.y += playerMovement.y;
+            var nextLocation = new Vector2Int(playerLocation.x + playerMovement.x, playerLocation.y + playerMovement.y);
+            var nextCell = level.GetCellAt(nextLocation.x, nextLocation.y);
+
+            if (nextCell != null)
+            {
+                var monster = level.GetMonsterAt(nextLocation.x, nextLocation.y);
+                if (monster == null)
+                {
+                    playerLocation = nextLocation;
+                }
+                else
+                {
+                    monster.TakeDamage(1);
+                    if (monster.IsDead)
+                    {
+                        level.RemoveMonster(monster);
+                    }
+                }
+            }
 
             UpdateMonsters();
         }
@@ -59,7 +74,7 @@ public class MainController : MonoBehaviour
 
     private void MoveMonstersToPositions()
     {
-        foreach (var monster in monsters)
+        foreach (var monster in level.Monsters)
         {
             var newPosition = monster.TargetPosition;
             monster.transform.position = Vector3.Lerp(monster.transform.position, newPosition, Time.deltaTime * MovementSpeed);
@@ -68,9 +83,12 @@ public class MainController : MonoBehaviour
 
     private void UpdateMonsters()
     {
-        foreach (var monster in monsters)
+        foreach (var monster in level.Monsters)
         {
+            var oldLocation = monster.Location;
             var nextLocation = monster.Move(level);
+            level.MoveMonster(oldLocation, monster);
+
             var nextPosition = levelBuilderInstance.LevelLocationToWorldPosition(nextLocation);
             monster.TargetPosition = nextPosition;
         }
@@ -87,7 +105,7 @@ public class MainController : MonoBehaviour
             var monster = Instantiate<Monster>(MonsterPrefab, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
-            monsters.Add(monster);
+            level.AddMonster(monster);
         }
     }
 
@@ -96,11 +114,6 @@ public class MainController : MonoBehaviour
         var randomRoom = level.RandomRoom;
         playerLocation.x = random.Next(randomRoom.xMin + 1, randomRoom.xMax);
         playerLocation.y = random.Next(randomRoom.yMin + 1, randomRoom.yMax);
-    }
-
-    private bool CheckNextMove(Vector2Int move)
-    {
-        return level.GetCellAt(playerLocation.x + move.x, playerLocation.y + move.y) != null;
     }
 
     private Vector2Int CheckPlayerMovement()
