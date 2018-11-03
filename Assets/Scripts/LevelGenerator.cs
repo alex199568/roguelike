@@ -9,21 +9,39 @@ public class LevelGenerator : MonoBehaviour
     public int MinRoomSize = 2;
     public int MaxRoomSize = 8;
     public int MaxRoomDisplacement = 5;
+    public Object.Cell CellPrefab;
 
     private Vector2Int xBounds;
     private Vector2Int yBounds;
 
     private System.Random random = new System.Random();
 
+    private float cellWidth;
+    private float cellHeight;
+
     void Awake ()
     {
         xBounds = new Vector2Int(-Width / 2, Width / 2);
         yBounds = new Vector2Int(-Height / 2, Height / 2);
+
+        Vector3 size = CellPrefab.GetComponent<Renderer>().bounds.size;
+        cellWidth = size.x;
+        cellHeight = size.y;
     }
 	
 	void Update ()
     {
 	}
+
+    public Vector3 LocationToPosition(Vector2Int location)
+    {
+        return new Vector3
+            (
+            transform.position.x + location.x * cellWidth,
+            1.0f,
+            transform.position.z + location.y * cellHeight
+            );
+    }
 
     public Level.Level GenerateLevel()
     {
@@ -397,9 +415,9 @@ public class LevelGenerator : MonoBehaviour
 
             if (xChanged && yChanged)
             {
-                var cell1 = new Cell(i, j);
-                var cell2 = new Cell(i - stepX, j);
-                var cell3 = new Cell(i, j - stepY);
+                var cell1 = CreateCellAt(i, j);
+                var cell2 = CreateCellAt(i - stepX, j);
+                var cell3 = CreateCellAt(i, j - stepY);
                 
                 level.AddCell(cell1);
                 level.AddCell(cell2);
@@ -407,7 +425,7 @@ public class LevelGenerator : MonoBehaviour
             }
             else if (xChanged || yChanged)
             {
-                var cell = new Cell(i, j);
+                var cell = CreateCellAt(i, j);
                 level.AddCell(cell);
             }
             else
@@ -423,9 +441,22 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int j = position.yMin + 1; j < position.yMax; ++j)
             {
-                level.AddCell(new Cell(i, j));
+                level.AddCell(CreateCellAt(i, j));
             }
         }
+    }
+
+    private Object.Cell CreateCellAt(int x, int y)
+    {
+        Vector3 position = new Vector3
+            (
+            transform.position.x + x * cellWidth,
+            0.0f,
+            transform.position.y + y * cellHeight
+            );
+        Object.Cell cell = Instantiate(CellPrefab, position, transform.rotation);
+        cell.Location = new Vector2Int(x, y);
+        return cell;
     }
 
     private struct GeneratedRoom

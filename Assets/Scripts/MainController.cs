@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class MainController : MonoBehaviour
 {
-    public LevelBuilder LevelBuilderPrefab;
     public LevelGenerator LevelGeneratorPrefab;
 
     public GameObject Player;
 
-    public Monster MonsterPrefab;
+    public Object.Monster MonsterPrefab;
 
     public float MovementSpeed = 3.2f;
 
-    private LevelBuilder levelBuilderInstance;
     private LevelGenerator levelGeneratorInstance;
 
     private Level.Level level;
@@ -24,14 +22,12 @@ public class MainController : MonoBehaviour
 
     private void Awake()
     {
-        levelBuilderInstance = Instantiate(LevelBuilderPrefab);
         levelGeneratorInstance = Instantiate(LevelGeneratorPrefab);
     }
 
     void Start()
     {
         level = levelGeneratorInstance.GenerateLevel();
-        levelBuilderInstance.Build(level);
 
         FindStartingPosition();
 
@@ -89,7 +85,7 @@ public class MainController : MonoBehaviour
             var nextLocation = monster.Move(level);
             level.MoveMonster(oldLocation, monster);
 
-            var nextPosition = levelBuilderInstance.LevelLocationToWorldPosition(nextLocation);
+            var nextPosition = levelGeneratorInstance.LocationToPosition(nextLocation);
             monster.TargetPosition = nextPosition;
         }
     }
@@ -101,8 +97,8 @@ public class MainController : MonoBehaviour
             var randomX = random.Next(room.xMin + 1, room.xMax);
             var randomY = random.Next(room.yMin + 1, room.yMax);
             var location = new Vector2Int(randomX, randomY);
-            var position = levelBuilderInstance.LevelLocationToWorldPosition(location);
-            var monster = Instantiate<Monster>(MonsterPrefab, position, transform.rotation);
+            var position = levelGeneratorInstance.LocationToPosition(location);
+            var monster = Instantiate<Object.Monster>(MonsterPrefab, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
             level.AddMonster(monster);
@@ -163,7 +159,7 @@ public class MainController : MonoBehaviour
 
     private void MovePlayerToLocation(bool smooth = true)
     {
-        var newPosition = levelBuilderInstance.LevelLocationToWorldPosition(playerLocation);
+        var newPosition = levelGeneratorInstance.LocationToPosition(playerLocation);
         if (smooth)
         {
             Player.transform.position = Vector3.Lerp(Player.transform.position, newPosition, Time.deltaTime * MovementSpeed);

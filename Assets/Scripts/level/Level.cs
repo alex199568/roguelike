@@ -10,9 +10,9 @@ namespace Level
 
         public List<RectInt> Rooms { set; get; } = new List<RectInt>();
 
-        public CustomGrid<Cell> Cells { get; } = new CustomGrid<Cell>();
+        public CustomGrid<Object.Cell> Cells { get; } = new CustomGrid<Object.Cell>();
 
-        public CustomGrid<Monster> Monsters { get; } = new CustomGrid<Monster>();
+        public CustomGrid<Object.Monster> Monsters { get; } = new CustomGrid<Object.Monster>();
 
         public RectInt RandomRoom
         {
@@ -29,7 +29,7 @@ namespace Level
             Rooms.Add(room);
         }
 
-        public bool AddCell(Cell cell)
+        public bool AddCell(Object.Cell cell)
         {
             var existingCell = GetCellAt(cell.Location.x, cell.Location.y);
             if (existingCell != null)
@@ -48,12 +48,12 @@ namespace Level
             }
         }
 
-        public Cell GetCellAt(int x, int y)
+        public Object.Cell GetCellAt(int x, int y)
         {
             return Cells.GetAt(x, y);
         }
 
-        public bool AddMonster(Monster monster)
+        public bool AddMonster(Object.Monster monster)
         {
             var cell = GetCellAt(monster.Location.x, monster.Location.y);
             var existingMonster = GetMonsterAt(monster.Location.x, monster.Location.y);
@@ -72,19 +72,19 @@ namespace Level
             return false;
         }
 
-        public Monster GetMonsterAt(int x, int y)
+        public Object.Monster GetMonsterAt(int x, int y)
         {
             return Monsters.GetAt(x, y);
         }
 
-        public void RemoveMonster(Monster monster)
+        public void RemoveMonster(Object.Monster monster)
         {
             Monsters.Remove(monster.Location.x, monster.Location.y, monster);
             Destroy(monster.gameObject);
             Destroy(monster);
         }
 
-        public void MoveMonster(Vector2Int from, Monster monster)
+        public void MoveMonster(Vector2Int from, Object.Monster monster)
         {
             Monsters.Remove(from.x, from.y);
             Monsters.AddExisting(monster.Location.x, monster.Location.y, monster);
