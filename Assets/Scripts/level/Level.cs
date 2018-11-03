@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Level
 {
-    public class Level
+    public class Level : MonoBehaviour
     {
         private System.Random random = new System.Random();
 
@@ -75,6 +75,19 @@ namespace Level
         public Monster GetMonsterAt(int x, int y)
         {
             return Monsters.GetAt(x, y);
+        }
+
+        public void RemoveMonster(Monster monster)
+        {
+            Monsters.Remove(monster.Location.x, monster.Location.y, monster);
+            Destroy(monster.gameObject);
+            Destroy(monster);
+        }
+
+        public void MoveMonster(Vector2Int from, Monster monster)
+        {
+            Monsters.Remove(from.x, from.y);
+            Monsters.AddExisting(monster.Location.x, monster.Location.y, monster);
         }
     }
 }

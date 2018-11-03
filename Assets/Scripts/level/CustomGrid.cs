@@ -1,12 +1,12 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using System.Collections;
+using UnityEngine;
 
 namespace Level
 {
     // TODO: check if it is possible to use Unity's grid
-    public class CustomGrid<E> : IEnumerable<E>
+    public class CustomGrid<E> : IEnumerable<E> where E : class
     {
         private ArrayGrid<E> gridI = new ArrayGrid<E>();
         private ArrayGrid<E> gridII = new ArrayGrid<E>();
@@ -46,6 +46,11 @@ namespace Level
             allItems.Add(item);
         }
 
+        public void AddExisting(int x, int y, E item)
+        {
+            ResolveGrid(x, y).Set(Math.Abs(x), Math.Abs(y), item);
+        }
+
         public E GetAt(int x, int y)
         {
             try
@@ -57,7 +62,32 @@ namespace Level
                 // ...
             }
 
-            return default(E);
+            return null;
+        }
+
+        public void Remove(int x, int y, E item)
+        {
+            try
+            {
+                allItems.Remove(item);
+                ResolveGrid(x, y).Remove(Math.Abs(x), Math.Abs(y));
+            }
+            catch (IndexOutOfRangeException)
+            {
+                // ...
+            }
+        }
+
+        public void Remove(int x, int y)
+        {
+            try
+            {
+                ResolveGrid(x, y).Remove(Math.Abs(x), Math.Abs(y));
+            }
+            catch (IndexOutOfRangeException)
+            {
+                // ...
+            }
         }
 
         IEnumerator<E> IEnumerable<E>.GetEnumerator()

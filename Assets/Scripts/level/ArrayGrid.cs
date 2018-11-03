@@ -1,6 +1,8 @@
+using UnityEngine;
+
 namespace Level
 {
-    public class ArrayGrid<E>
+    public class ArrayGrid<E> where E : class
     {
         private const int InitialWidth = 12;
         private const int InitialHeight = 12;
@@ -19,6 +21,11 @@ namespace Level
         public E Get(int x, int y)
         {
             return grid[x, y];
+        }
+
+        public void Remove(int x, int y)
+        {
+            grid[x, y] = null;
         }
 
         public bool IsEmpty

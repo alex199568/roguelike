@@ -27,7 +27,7 @@ public class LevelGenerator : MonoBehaviour
 
     public Level.Level GenerateLevel()
     {
-        Level.Level result = new Level.Level();
+        Level.Level result = gameObject.AddComponent<Level.Level>();
 
         var rooms = GenerateRooms();
         result.Rooms = rooms;
