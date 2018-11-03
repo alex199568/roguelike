@@ -6,17 +6,13 @@ public class MainController : MonoBehaviour
 {
     public LevelGenerator LevelGeneratorPrefab;
 
-    public GameObject Player;
+    public Object.Player Player;
 
     public Object.Monster MonsterPrefab;
-
-    public float MovementSpeed = 3.2f;
 
     private LevelGenerator levelGeneratorInstance;
 
     private Level.Level level;
-    private Vector2Int playerLocation = new Vector2Int(0, 0);
-    private Vector3 playerTargetPosition;
 
     private System.Random random = new System.Random();
 
@@ -29,19 +25,17 @@ public class MainController : MonoBehaviour
     {
         level = levelGeneratorInstance.GenerateLevel();
 
-        FindStartingPosition();
-
-        MovePlayerToLocation(false);
+        PlacePlayer();
 
         PlaceMonsters();
     }
 
     void Update()
     {
-        var playerMovement = CheckPlayerMovement();
+        var playerMovement = Player.CheckMovement();
         if ((playerMovement.x != 0 || playerMovement.y != 0))
         {
-            var nextLocation = new Vector2Int(playerLocation.x + playerMovement.x, playerLocation.y + playerMovement.y);
+            var nextLocation = new Vector2Int(Player.Location.x + playerMovement.x, Player.Location.y + playerMovement.y);
             var nextCell = level.GetCellAt(nextLocation.x, nextLocation.y);
 
             if (nextCell != null)
@@ -49,7 +43,8 @@ public class MainController : MonoBehaviour
                 var monster = level.GetMonsterAt(nextLocation.x, nextLocation.y);
                 if (monster == null)
                 {
-                    playerLocation = nextLocation;
+                    Player.Location = nextLocation;
+                    Player.TargetPosition = levelGeneratorInstance.LocationToPosition(Player.Location);
                 }
                 else
                 {
@@ -62,18 +57,6 @@ public class MainController : MonoBehaviour
             }
 
             UpdateMonsters();
-        }
-
-        MoveMonstersToPositions();
-        MovePlayerToLocation();
-    }
-
-    private void MoveMonstersToPositions()
-    {
-        foreach (var monster in level.Monsters)
-        {
-            var newPosition = monster.TargetPosition;
-            monster.transform.position = Vector3.Lerp(monster.transform.position, newPosition, Time.deltaTime * MovementSpeed);
         }
     }
 
@@ -105,68 +88,16 @@ public class MainController : MonoBehaviour
         }
     }
 
-    private void FindStartingPosition()
+    private void PlacePlayer()
     {
         var randomRoom = level.RandomRoom;
-        playerLocation.x = random.Next(randomRoom.xMin + 1, randomRoom.xMax);
-        playerLocation.y = random.Next(randomRoom.yMin + 1, randomRoom.yMax);
-    }
-
-    private Vector2Int CheckPlayerMovement()
-    {
-        if (Input.GetKeyUp("w"))
-        {
-            return new Vector2Int(0, 1);
-        }
-
-        if (Input.GetKeyUp("a"))
-        {
-            return new Vector2Int(-1, 0);
-        }
-
-        if (Input.GetKeyUp("s"))
-        {
-            return new Vector2Int(0, -1);
-        }
-
-        if (Input.GetKeyUp("d"))
-        {
-            return new Vector2Int(1, 0);
-        }
-
-        if (Input.GetKeyUp("q"))
-        {
-            return new Vector2Int(-1, 1);
-        }
-
-        if (Input.GetKeyUp("e"))
-        {
-            return new Vector2Int(1, 1);
-        }
-
-        if (Input.GetKeyUp("z"))
-        {
-            return new Vector2Int(-1, -1);
-        }
-
-        if (Input.GetKeyUp("c"))
-        {
-            return new Vector2Int(1, -1);
-        }
-
-        return new Vector2Int(0, 0);
-    }
-
-    private void MovePlayerToLocation(bool smooth = true)
-    {
-        var newPosition = levelGeneratorInstance.LocationToPosition(playerLocation);
-        if (smooth)
-        {
-            Player.transform.position = Vector3.Lerp(Player.transform.position, newPosition, Time.deltaTime * MovementSpeed);
-        }
-        else
-        {
-            Player.transform.position = newPosition;
-        }
+        Player.Location = new Vector2Int
+            (
+            random.Next(randomRoom.xMin + 1, randomRoom.xMax),
+            random.Next(randomRoom.yMin + 1, randomRoom.yMax)
+            );
+        var position = levelGeneratorInstance.LocationToPosition(Player.Location);
+        Player.transform.position = position;
+        Player.TargetPosition = position;
     }
 }

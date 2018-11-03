@@ -11,6 +11,7 @@ namespace Object
         private int hp;
 
         public int MaxHp = 2;
+        public float MovementSpeed = 3.2f;
 
         public Vector3 TargetPosition { get; set; }
 
@@ -28,6 +29,7 @@ namespace Object
 
         void Update()
         {
+            transform.position = Vector3.Lerp(transform.position, TargetPosition, Time.deltaTime * MovementSpeed);
         }
 
         public void TakeDamage(int damage)
@@ -48,5 +50,4 @@ namespace Object
             return newLocation;
         }
     }
-
 }
