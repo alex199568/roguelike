@@ -12,6 +12,8 @@ namespace Level
 
         public CustomGrid<Cell> Cells { get; } = new CustomGrid<Cell>();
 
+        public CustomGrid<Monster> Monsters { get; } = new CustomGrid<Monster>();
+
         public RectInt RandomRoom
         {
             get { return Rooms[random.Next(Rooms.Count)]; }
@@ -27,14 +29,52 @@ namespace Level
             Rooms.Add(room);
         }
 
-        public void AddCell(Cell cell)
+        public bool AddCell(Cell cell)
         {
-            Cells.Add(cell.Location.x, cell.Location.y, cell);
+            var existingCell = GetCellAt(cell.Location.x, cell.Location.y);
+            if (existingCell != null)
+            {
+                return false;
+            }
+
+            try
+            {
+                Cells.Add(cell.Location.x, cell.Location.y, cell);
+                return true;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return false;
+            }
         }
 
         public Cell GetCellAt(int x, int y)
         {
             return Cells.GetAt(x, y);
+        }
+
+        public bool AddMonster(Monster monster)
+        {
+            var cell = GetCellAt(monster.Location.x, monster.Location.y);
+            var existingMonster = GetMonsterAt(monster.Location.x, monster.Location.y);
+            if (cell != null && existingMonster == null)
+            {
+                try
+                {
+                    Monsters.Add(monster.Location.x, monster.Location.y, monster);
+                    return true;
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        public Monster GetMonsterAt(int x, int y)
+        {
+            return Monsters.GetAt(x, y);
         }
     }
 }

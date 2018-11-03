@@ -42,15 +42,8 @@ namespace Level
 
         public void Add(int x, int y, E item)
         {
-            try
-            {
-                ResolveGrid(x, y).Set(Math.Abs(x), Math.Abs(y), item);
-                allItems.Add(item);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Debug.LogWarning($"could not add cell at {x}, {y}");
-            }
+            ResolveGrid(x, y).Set(Math.Abs(x), Math.Abs(y), item);
+            allItems.Add(item);
         }
 
         public E GetAt(int x, int y)

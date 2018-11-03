@@ -20,8 +20,6 @@ public class MainController : MonoBehaviour
     private Vector2Int playerLocation = new Vector2Int(0, 0);
     private Vector3 playerTargetPosition;
 
-    private List<Monster> monsters = new List<Monster>();
-
     private System.Random random = new System.Random();
 
     private void Awake()
@@ -59,7 +57,7 @@ public class MainController : MonoBehaviour
 
     private void MoveMonstersToPositions()
     {
-        foreach (var monster in monsters)
+        foreach (var monster in level.Monsters)
         {
             var newPosition = monster.TargetPosition;
             monster.transform.position = Vector3.Lerp(monster.transform.position, newPosition, Time.deltaTime * MovementSpeed);
@@ -68,7 +66,7 @@ public class MainController : MonoBehaviour
 
     private void UpdateMonsters()
     {
-        foreach (var monster in monsters)
+        foreach (var monster in level.Monsters)
         {
             var nextLocation = monster.Move(level);
             var nextPosition = levelBuilderInstance.LevelLocationToWorldPosition(nextLocation);
@@ -87,7 +85,7 @@ public class MainController : MonoBehaviour
             var monster = Instantiate<Monster>(MonsterPrefab, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
-            monsters.Add(monster);
+            level.AddMonster(monster);
         }
     }
 
