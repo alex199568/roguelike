@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
+using System.Collections;
 
 namespace Level
 {
     // TODO: check if it is possible to use Unity's grid
-    public class CustomGrid<E>
+    public class CustomGrid<E> : IEnumerable<E>
     {
         private ArrayGrid<E> gridI = new ArrayGrid<E>();
         private ArrayGrid<E> gridII = new ArrayGrid<E>();
         private ArrayGrid<E> gridIII = new ArrayGrid<E>();
         private ArrayGrid<E> gridIV = new ArrayGrid<E>();
 
+        private List<E> allItems = new List<E>();
+
         public bool IsEmpty
         {
-            get { return gridI.IsEmpty && gridII.IsEmpty && gridIII.IsEmpty && gridIV.IsEmpty; }
+            get { return allItems.Count == 0; }
         }
 
         public int XMin
@@ -37,11 +40,12 @@ namespace Level
             get { return Math.Max(gridI.Height, gridII.Height); }
         }
 
-        public void Add(int x, int y, E cell)
+        public void Add(int x, int y, E item)
         {
             try
             {
-                ResolveGrid(x, y).Set(Math.Abs(x), Math.Abs(y), cell);
+                ResolveGrid(x, y).Set(Math.Abs(x), Math.Abs(y), item);
+                allItems.Add(item);
             }
             catch (IndexOutOfRangeException)
             {
@@ -61,6 +65,16 @@ namespace Level
             }
 
             return default(E);
+        }
+
+        IEnumerator<E> IEnumerable<E>.GetEnumerator()
+        {
+            return ((IEnumerable<E>)allItems).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<E>)allItems).GetEnumerator();
         }
 
         private ArrayGrid<E> ResolveGrid(int x, int y)

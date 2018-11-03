@@ -369,8 +369,6 @@ public class LevelGenerator : MonoBehaviour
 
     private void ConnectWithPassage(Level.Level level, RectInt room1, RectInt room2)
     {
-        Cell cell = new Cell();
-
         int startX = random.Next(room1.xMin + 1, room1.xMax - 1);
         int startY = random.Next(room1.yMin + 1, room1.yMax - 1);
         int endX = random.Next(room2.xMin + 1, room2.xMax - 1);
@@ -399,13 +397,18 @@ public class LevelGenerator : MonoBehaviour
 
             if (xChanged && yChanged)
             {
-                level.AddCell(i, j, cell);
-                level.AddCell(i - stepX, j, cell);
-                level.AddCell(i, j - stepY, cell);
+                var cell1 = new Cell(i, j);
+                var cell2 = new Cell(i - stepX, j);
+                var cell3 = new Cell(i, j - stepY);
+                
+                level.AddCell(cell1);
+                level.AddCell(cell2);
+                level.AddCell(cell3);
             }
             else if (xChanged || yChanged)
             {
-                level.AddCell(i, j, cell);
+                var cell = new Cell(i, j);
+                level.AddCell(cell);
             }
             else
             {
@@ -416,13 +419,11 @@ public class LevelGenerator : MonoBehaviour
 
     private void PlaceRoom(Level.Level level, RectInt position)
     {
-        Cell cell = new Cell();
-
         for (int i = position.xMin + 1; i < position.xMax; ++i)
         {
             for (int j = position.yMin + 1; j < position.yMax; ++j)
             {
-                level.AddCell(i, j, cell);
+                level.AddCell(new Cell(i, j));
             }
         }
     }

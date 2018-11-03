@@ -23,22 +23,15 @@ public class LevelBuilder : MonoBehaviour
             return;
         }
 
-        for (int i = level.XMin; i < level.XMax; ++i)
+        foreach (var cell in level.Cells)
         {
-            for (int j = level.YMin; j < level.YMax; ++j)
-            {
-                Cell cell = level.GetCellAt(i, j);
-                if (cell != null)
-                {
-                    Vector3 newPosition = new Vector3
+            Vector3 newPosition = new Vector3
                     (
-                    transform.position.x + i * cellWidth,
+                    transform.position.x + cell.Location.x * cellWidth,
                     0.0f,
-                    transform.position.y + j * cellHeight
+                    transform.position.y + cell.Location.y * cellHeight
                     );
-                    Instantiate(Floor, newPosition, transform.rotation);
-                }
-            }
+            Instantiate(Floor, newPosition, transform.rotation);
         }
     }
 

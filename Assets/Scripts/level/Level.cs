@@ -8,9 +8,9 @@ namespace Level
     {
         private System.Random random = new System.Random();
 
-        private CustomGrid<Cell> cells = new CustomGrid<Cell>();
-
         public List<RectInt> Rooms { set; get; } = new List<RectInt>();
+
+        public CustomGrid<Cell> Cells { get; } = new CustomGrid<Cell>();
 
         public RectInt RandomRoom
         {
@@ -19,27 +19,7 @@ namespace Level
 
         public bool IsEmpty
         {
-            get { return cells.IsEmpty; }
-        }
-
-        public int XMin
-        {
-            get { return cells.XMin; }
-        }
-
-        public int XMax
-        {
-            get { return cells.XMax; }
-        }
-
-        public int YMin
-        {
-            get { return cells.YMin; }
-        }
-
-        public int YMax
-        {
-            get { return cells.YMax; }
+            get { return Cells.IsEmpty; }
         }
 
         public void AddRoom(RectInt room)
@@ -47,14 +27,14 @@ namespace Level
             Rooms.Add(room);
         }
 
-        public void AddCell(int x, int y, Cell cell)
+        public void AddCell(Cell cell)
         {
-            cells.Add(x, y, cell);
+            Cells.Add(cell.Location.x, cell.Location.y, cell);
         }
 
         public Cell GetCellAt(int x, int y)
         {
-            return cells.GetAt(x, y);
+            return Cells.GetAt(x, y);
         }
     }
 }
