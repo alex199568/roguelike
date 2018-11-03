@@ -2,21 +2,11 @@ public class ArrayGrid<E>
 {
     private const int InitialWidth = 12;
     private const int InitialHeight = 12;
-
-    private int width = 0;
-    private int height = 0;
-
     private E[,] grid = new E[InitialWidth, InitialHeight];
 
-    public int Width
-    {
-        get { return width; }
-    }
+    public int Width { get; private set; } = 0;
 
-    public int Height
-    {
-        get { return height; }
-    }
+    public int Height { get; private set; } = 0;
 
     public void Set(int x, int y, E value)
     {
@@ -31,7 +21,7 @@ public class ArrayGrid<E>
 
     public bool IsEmpty
     {
-        get { return width == 0 || height == 0; }
+        get { return Width == 0 || Height == 0; }
     }
 
     private void EnsureCapacity(int x, int y)
@@ -40,18 +30,18 @@ public class ArrayGrid<E>
         {
             GrowWidth(x);
         }
-        if (x >= width)
+        if (x >= Width)
         {
-            width = x + 1;
+            Width = x + 1;
         }
 
         if (y >= grid.GetLength(1))
         {
             GrowHeight(y);
         }
-        if (y >= height)
+        if (y >= Height)
         {
-            height = y + 1;
+            Height = y + 1;
         }
     }
 
@@ -71,9 +61,9 @@ public class ArrayGrid<E>
 
     private void CopyToNewGrid(E[,] oldGrid, E[,] newGrid)
     {
-        for (int i = 0; i < width; ++i)
+        for (int i = 0; i < Width; ++i)
         {
-            for (int j = 0; j < height; ++j)
+            for (int j = 0; j < Height; ++j)
             {
                 newGrid[i, j] = oldGrid[i, j];
             }

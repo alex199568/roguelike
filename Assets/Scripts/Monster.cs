@@ -6,27 +6,31 @@ public class Monster : MonoBehaviour
 {
     private System.Random random = new System.Random();
 
-    private Vector3 targetPosition;
-    private Vector2Int location;
+    private int hp;
 
-    public Vector3 TargetPosition
+    public int MaxHp = 2;
+
+    public Vector3 TargetPosition { get; set; }
+
+    public Vector2Int Location { get; set; }
+
+    public bool IsDead
     {
-        get { return targetPosition; }
-        set { targetPosition = value; }
+        get { return hp <= 0; }
     }
 
-    public Vector2Int Location
+    private void Awake()
     {
-        get { return location; }
-        set { location = value; }
-    }
-
-    void Start()
-    {
+        hp = MaxHp;
     }
 
     void Update()
     {
+    }
+
+    public void TakeDamage(int damage)
+    {
+        hp -= damage;
     }
 
     public Vector2Int Move(Level level)
@@ -35,10 +39,10 @@ public class Monster : MonoBehaviour
         Cell cell;
         do
         {
-            newLocation = new Vector2Int(location.x + random.Next(-1, 2), location.y + random.Next(-1, 2));
+            newLocation = new Vector2Int(Location.x + random.Next(-1, 2), Location.y + random.Next(-1, 2));
             cell = level.GetCellAt(newLocation.x, newLocation.y);
         } while (cell == null);
-        location = newLocation;
+        Location = newLocation;
         return newLocation;
     }
 }
