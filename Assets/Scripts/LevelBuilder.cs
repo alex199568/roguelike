@@ -16,7 +16,7 @@ public class LevelBuilder : MonoBehaviour
         cellHeight = size.z;
     }
 
-    public void Build(Level level)
+    public void Build(Level.Level level)
     {
         if (level.IsEmpty)
         {

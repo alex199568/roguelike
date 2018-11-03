@@ -33,7 +33,7 @@ public class Monster : MonoBehaviour
         hp -= damage;
     }
 
-    public Vector2Int Move(Level level)
+    public Vector2Int Move(Level.Level level)
     {
         Vector2Int newLocation;
         Cell cell;

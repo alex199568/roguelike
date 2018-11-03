@@ -16,7 +16,7 @@ public class MainController : MonoBehaviour
     private LevelBuilder levelBuilderInstance;
     private LevelGenerator levelGeneratorInstance;
 
-    private Level level;
+    private Level.Level level;
     private Vector2Int playerLocation = new Vector2Int(0, 0);
     private Vector3 playerTargetPosition;
 

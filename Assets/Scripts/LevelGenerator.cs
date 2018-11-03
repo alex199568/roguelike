@@ -25,9 +25,9 @@ public class LevelGenerator : MonoBehaviour
     {
 	}
 
-    public Level GenerateLevel()
+    public Level.Level GenerateLevel()
     {
-        Level result = new Level();
+        Level.Level result = new Level.Level();
 
         var rooms = GenerateRooms();
         result.Rooms = rooms;
@@ -42,7 +42,7 @@ public class LevelGenerator : MonoBehaviour
         return result;
     }
 
-    private void ConnectRooms(Level level, List<RectInt> rooms)
+    private void ConnectRooms(Level.Level level, List<RectInt> rooms)
     {
         if (rooms.Count == 0)
         {
@@ -367,7 +367,7 @@ public class LevelGenerator : MonoBehaviour
         );
     }
 
-    private void ConnectWithPassage(Level level, RectInt room1, RectInt room2)
+    private void ConnectWithPassage(Level.Level level, RectInt room1, RectInt room2)
     {
         Cell cell = new Cell();
 
@@ -414,7 +414,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void PlaceRoom(Level level, RectInt position)
+    private void PlaceRoom(Level.Level level, RectInt position)
     {
         Cell cell = new Cell();
 
