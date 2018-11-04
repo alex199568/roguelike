@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 namespace Object
@@ -9,6 +10,7 @@ namespace Object
 
         public float MovementSpeed = 3.2f;
         public int InitialHp = 10;
+        public Text HpText;
 
         private int hp;
 
@@ -22,7 +24,6 @@ namespace Object
         public void TakeDamage(int damage)
         {
             hp -= damage;
-            Debug.Log($"Player took damage {damage}, hp is {hp}");
         }
 
         public bool IsDead
@@ -33,6 +34,11 @@ namespace Object
         private void Update()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, Time.deltaTime * MovementSpeed);
+        }
+
+        private void LateUpdate()
+        {
+            HpText.text = $"HP: {hp}";
         }
 
         public Vector2Int? CheckMovement()
