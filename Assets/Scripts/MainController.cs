@@ -33,9 +33,10 @@ public class MainController : MonoBehaviour // TODO: refactor into several contr
     void Update()
     {
         var playerMovement = Player.CheckMovement();
-        if ((playerMovement.x != 0 || playerMovement.y != 0))
+        if (playerMovement != null)
         {
-            var nextLocation = new Vector2Int(Player.Location.x + playerMovement.x, Player.Location.y + playerMovement.y);
+            var movement = (Vector2Int)playerMovement;
+            var nextLocation = new Vector2Int(Player.Location.x + movement.x, Player.Location.y + movement.y);
             var nextCell = level.GetCellAt(nextLocation.x, nextLocation.y);
 
             if (nextCell != null)
@@ -69,7 +70,11 @@ public class MainController : MonoBehaviour // TODO: refactor into several contr
             if (nextLocation != null)
             {
                 var location = (Vector2Int)nextLocation;
-                if (level.MoveMonster(monster, location))
+                if (location.x == Player.Location.x && location.y == Player.Location.y)
+                {
+                    Player.TakeDamage(1);
+                }
+                else if (level.MoveMonster(monster, location))
                 {
                     var nextPosition = levelGeneratorInstance.LocationToPosition(location);
                     monster.TargetPosition = nextPosition;
