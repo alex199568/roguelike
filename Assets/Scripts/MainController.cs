@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainController : MonoBehaviour // TODO: refactor into several controllers
+public class MainController : MonoBehaviour
 {
     public LevelGenerator LevelGeneratorPrefab;
 
