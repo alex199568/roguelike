@@ -20,6 +20,11 @@ namespace Level
             get { return allItems.Count == 0; }
         }
 
+        public int Count
+        {
+            get { return allItems.Count; }
+        }
+
         public int XMin
         {
             get { return -Math.Max(gridII.Width, gridIII.Width); }
