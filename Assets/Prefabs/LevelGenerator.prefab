@@ -34,7 +34,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1601723919592268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.814756, y: 8.914799, z: 21.72998}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,3 +56,5 @@ MonoBehaviour:
   MinRoomSize: 5
   MaxRoomSize: 16
   MaxRoomDisplacement: 12
+  CellPrefab: {fileID: 114795009467181962, guid: f83258b7832312d4c93badc5ad32c371,
+    type: 2}

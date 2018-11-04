@@ -280,6 +280,7 @@ GameObject:
   - component: {fileID: 664390869}
   - component: {fileID: 664390868}
   - component: {fileID: 664390867}
+  - component: {fileID: 664390871}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -355,6 +356,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &664390871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 664390866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 877b54bcd09a6044195d099fa85f9d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MovementSpeed: 8
 --- !u!1 &1929863173
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,14 +395,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb629c6543c2e6479f216986ca8c408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LevelBuilderPrefab: {fileID: 114714053514731262, guid: b385d9b4f3adcd648ae81bdc2029dcd2,
-    type: 2}
   LevelGeneratorPrefab: {fileID: 114168227689263298, guid: b7822a41aec790a49888a0e3469438f9,
     type: 2}
-  Player: {fileID: 664390866}
+  Player: {fileID: 664390871}
   MonsterPrefab: {fileID: 114165579247787602, guid: 74434ffdac2b5b64db8c372d7f5ec8f9,
     type: 2}
-  MovementSpeed: 8
 --- !u!4 &1929863175
 Transform:
   m_ObjectHideFlags: 0

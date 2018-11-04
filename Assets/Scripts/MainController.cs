@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainController : MonoBehaviour
+public class MainController : MonoBehaviour // TODO: refactor into several controllers
 {
     public LevelGenerator LevelGeneratorPrefab;
 
@@ -65,11 +65,16 @@ public class MainController : MonoBehaviour
         foreach (var monster in level.Monsters)
         {
             var oldLocation = monster.Location;
-            var nextLocation = monster.Move(level);
-            level.MoveMonster(oldLocation, monster);
-
-            var nextPosition = levelGeneratorInstance.LocationToPosition(nextLocation);
-            monster.TargetPosition = nextPosition;
+            var nextLocation = monster.Move(level, Player);
+            if (nextLocation != null)
+            {
+                var location = (Vector2Int)nextLocation;
+                if (level.MoveMonster(monster, location))
+                {
+                    var nextPosition = levelGeneratorInstance.LocationToPosition(location);
+                    monster.TargetPosition = nextPosition;
+                }
+            }
         }
     }
 
@@ -81,7 +86,7 @@ public class MainController : MonoBehaviour
             var randomY = random.Next(room.yMin + 1, room.yMax);
             var location = new Vector2Int(randomX, randomY);
             var position = levelGeneratorInstance.LocationToPosition(location);
-            var monster = Instantiate<Object.Monster>(MonsterPrefab, position, transform.rotation);
+            Object.Monster monster = Instantiate(MonsterPrefab, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
             level.AddMonster(monster);

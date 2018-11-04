@@ -84,10 +84,24 @@ namespace Level
             Destroy(monster);
         }
 
-        public void MoveMonster(Vector2Int from, Object.Monster monster)
+        public bool MoveMonster(Object.Monster monster, Vector2Int to)
         {
-            Monsters.Remove(from.x, from.y);
-            Monsters.AddExisting(monster.Location.x, monster.Location.y, monster);
+            var cell = GetCellAt(to.x, to.y);
+            if (cell == null)
+            {
+                return false;
+            }
+
+            var other = GetMonsterAt(to.x, to.y);
+            if (other != null)
+            {
+                return false;
+            }
+
+            Monsters.Remove(monster.Location.x, monster.Location.y);
+            Monsters.AddExisting(to.x, to.y, monster);
+            monster.Location = to;
+            return true;
         }
     }
 }
