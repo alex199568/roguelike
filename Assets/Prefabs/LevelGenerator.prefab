@@ -56,5 +56,5 @@ MonoBehaviour:
   MinRoomSize: 5
   MaxRoomSize: 16
   MaxRoomDisplacement: 12
-  CellPrefab: {fileID: 114795009467181962, guid: f83258b7832312d4c93badc5ad32c371,
+  CellPrefab: {fileID: 114731635342330680, guid: 6d94e026d2aa52846a99b6dee0d32c68,
     type: 2}

@@ -26,7 +26,7 @@ public class LevelGenerator : MonoBehaviour
 
         Vector3 size = CellPrefab.GetComponent<Renderer>().bounds.size;
         cellWidth = size.x;
-        cellHeight = size.y;
+        cellHeight = size.z;
     }
 	
 	void Update ()
