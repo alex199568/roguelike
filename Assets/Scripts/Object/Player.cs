@@ -25,6 +25,11 @@ namespace Object
             Debug.Log($"Player took damage {damage}, hp is {hp}");
         }
 
+        public bool IsDead
+        {
+            get { return hp <= 0; }
+        }
+
         private void Update()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, Time.deltaTime * MovementSpeed);

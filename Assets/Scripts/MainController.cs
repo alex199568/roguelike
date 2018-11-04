@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainController : MonoBehaviour // TODO: refactor into several controllers
 {
@@ -73,6 +74,10 @@ public class MainController : MonoBehaviour // TODO: refactor into several contr
                 if (location.x == Player.Location.x && location.y == Player.Location.y)
                 {
                     Player.TakeDamage(1);
+                    if (Player.IsDead)
+                    {
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    }
                 }
                 else if (level.MoveMonster(monster, location))
                 {
