@@ -649,7 +649,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: 88f4df71-b65d-413b-813a-ad378e9af446
   projectName: Roguelike (2)
   organizationId: alexander-bondarenco
