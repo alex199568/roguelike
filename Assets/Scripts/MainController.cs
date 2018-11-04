@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MainController : MonoBehaviour
 {
     public LevelGenerator LevelGeneratorPrefab;
+    public Object.Monster MonsterPrefab;
 
     public Object.Player Player;
-
-    public Object.Monster MonsterPrefab;
+    public Text KillCountText;
 
     private LevelGenerator levelGeneratorInstance;
 
     private Level.Level level;
 
     private System.Random random = new System.Random();
+
+    private int kills = 0;
 
     private void Awake()
     {
@@ -53,13 +56,23 @@ public class MainController : MonoBehaviour
                     monster.TakeDamage(1);
                     if (monster.IsDead)
                     {
+                        ++kills;
                         level.RemoveMonster(monster);
+                        if (level.MonsterCount == 0)
+                        {
+                            Reload();
+                        }
                     }
                 }
             }
 
             UpdateMonsters();
         }
+    }
+
+    private void LateUpdate()
+    {
+        KillCountText.text = $"Kills {kills}";
     }
 
     private void UpdateMonsters()
@@ -76,7 +89,7 @@ public class MainController : MonoBehaviour
                     Player.TakeDamage(1);
                     if (Player.IsDead)
                     {
-                        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                        Reload();
                     }
                 }
                 else if (level.MoveMonster(monster, location))
@@ -114,5 +127,10 @@ public class MainController : MonoBehaviour
         var position = levelGeneratorInstance.LocationToPosition(Player.Location);
         Player.transform.position = position;
         Player.TargetPosition = position;
+    }
+
+    private void Reload()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

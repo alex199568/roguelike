@@ -24,6 +24,11 @@ namespace Level
             get { return Cells.IsEmpty; }
         }
 
+        public int MonsterCount
+        {
+            get { return Monsters.Count; }
+        }
+
         public void AddRoom(RectInt room)
         {
             Rooms.Add(room);
