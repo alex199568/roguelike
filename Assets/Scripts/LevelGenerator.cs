@@ -10,6 +10,7 @@ public class LevelGenerator : MonoBehaviour
     public int MaxRoomSize = 8;
     public int MaxRoomDisplacement = 5;
     public Object.Cell CellPrefab;
+    public GameObject BackgroundPrefab;
 
     private Vector2Int xBounds;
     private Vector2Int yBounds;
@@ -57,7 +58,24 @@ public class LevelGenerator : MonoBehaviour
 
         ConnectRooms(result, rooms);
 
+        CreateBackground(result);
+        
         return result;
+    }
+
+    private void CreateBackground(Level.Level level)
+    {
+        GameObject background = Instantiate(BackgroundPrefab);
+        var dx = ((level.Cells.XMax + level.Cells.XMin) / 2) * cellWidth;
+        var dy = ((level.Cells.YMax + level.Cells.YMin) / 2) * cellHeight;
+        background.transform.position += new Vector3(dx, -1f, dy);
+
+        var levelWidth = level.Cells.XMax - level.Cells.XMin;
+        var levelHeight = level.Cells.YMax - level.Cells.YMin;
+        var backgroundSize = background.GetComponent<Renderer>().bounds.size;
+        var sx = levelWidth * cellWidth / backgroundSize.x * 2;
+        var sy = levelHeight * cellHeight / backgroundSize.z * 2;
+        background.transform.localScale = new Vector3(sx, 1.0f, sy);
     }
 
     private void ConnectRooms(Level.Level level, List<RectInt> rooms)
