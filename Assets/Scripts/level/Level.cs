@@ -58,6 +58,23 @@ namespace Level
             return Cells.GetAt(x, y);
         }
 
+        public List<Object.Cell> FindCellsInRange(Vector2Int origin, int range)
+        {
+            var result = new List<Object.Cell>();
+            for (int i = origin.x - range; i <= origin.x + range; ++i)
+            {
+                for (int j = origin.y - range; j <= origin.y + range; ++j)
+                {
+                    var cell = GetCellAt(i, j);
+                    if (cell != null)
+                    {
+                        result.Add(cell);
+                    }
+                }
+            }
+            return result;
+        }
+
         public bool AddMonster(Object.Monster monster)
         {
             var cell = GetCellAt(monster.Location.x, monster.Location.y);

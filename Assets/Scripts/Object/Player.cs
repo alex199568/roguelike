@@ -11,6 +11,7 @@ namespace Object
         public float MovementSpeed = 3.2f;
         public int InitialHp = 10;
         public Text HpText;
+        public int VisionRange = 4;
 
         private int hp;
 

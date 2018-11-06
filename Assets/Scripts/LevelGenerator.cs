@@ -20,7 +20,7 @@ public class LevelGenerator : MonoBehaviour
     private float cellWidth;
     private float cellHeight;
 
-    void Awake ()
+    void Awake()
     {
         xBounds = new Vector2Int(-Width / 2, Width / 2);
         yBounds = new Vector2Int(-Height / 2, Height / 2);
@@ -29,10 +29,10 @@ public class LevelGenerator : MonoBehaviour
         cellWidth = size.x;
         cellHeight = size.z;
     }
-	
-	void Update ()
+
+    void Update()
     {
-	}
+    }
 
     public Vector3 LocationToPosition(Vector2Int location)
     {
@@ -59,7 +59,7 @@ public class LevelGenerator : MonoBehaviour
         ConnectRooms(result, rooms);
 
         CreateBackground(result);
-        
+
         return result;
     }
 
@@ -436,7 +436,7 @@ public class LevelGenerator : MonoBehaviour
                 var cell1 = CreateCellAt(i, j);
                 var cell2 = CreateCellAt(i - stepX, j);
                 var cell3 = CreateCellAt(i, j - stepY);
-                
+
                 level.AddCell(cell1);
                 level.AddCell(cell2);
                 level.AddCell(cell3);
@@ -473,6 +473,15 @@ public class LevelGenerator : MonoBehaviour
             transform.position.y + y * cellHeight
             );
         Object.Cell cell = Instantiate(CellPrefab, position, transform.rotation);
+        foreach (Transform child in cell.transform)
+        {
+            if (child.CompareTag("Minimap"))
+            {
+                child.gameObject.SetActive(false);
+                break;
+            }
+        }
+
         cell.Location = new Vector2Int(x, y);
         return cell;
     }

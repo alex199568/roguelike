@@ -30,6 +30,7 @@ public class MainController : MonoBehaviour
         level = levelGeneratorInstance.GenerateLevel();
 
         PlacePlayer();
+        UpdateCellsVisibility();
 
         PlaceMonsters();
     }
@@ -50,6 +51,7 @@ public class MainController : MonoBehaviour
                 {
                     Player.Location = nextLocation;
                     Player.TargetPosition = levelGeneratorInstance.LocationToPosition(Player.Location);
+                    UpdateCellsVisibility();
                 }
                 else
                 {
@@ -67,6 +69,22 @@ public class MainController : MonoBehaviour
             }
 
             UpdateMonsters();
+        }
+    }
+
+    private void UpdateCellsVisibility()
+    {
+        var cells = level.FindCellsInRange(Player.Location, Player.VisionRange);
+        foreach (var cell in cells)
+        {
+            foreach (Transform child in cell.transform)
+            {
+                if (child.CompareTag("Minimap"))
+                {
+                    child.gameObject.SetActive(true);
+                    break;
+                }
+            }
         }
     }
 
