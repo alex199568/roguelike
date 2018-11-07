@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Object
 {
     public class Monster : MonoBehaviour
     {
         private System.Random random = new System.Random();
+        private Slider hpBar;
 
         private int hp;
 
@@ -27,6 +29,17 @@ namespace Object
         private void Awake()
         {
             hp = MaxHp;
+            hpBar = transform.Find("MonsterCanvas/Slider").gameObject.GetComponent<Slider>();
+            if (hpBar != null)
+            {
+                hpBar.maxValue = MaxHp;
+                hpBar.value = MaxHp;
+            }
+            else
+            {
+                Debug.LogWarning("Monster does not have hp bar as slider");
+            }
+            
         }
 
         void Update()
@@ -37,6 +50,10 @@ namespace Object
         public void TakeDamage(int damage)
         {
             hp -= damage;
+            if (hpBar != null && hp >= hpBar.minValue)
+            {
+                hpBar.value = hp;
+            }
         }
 
         public Vector2Int? Move(Level.Level level, Object.Player player)
