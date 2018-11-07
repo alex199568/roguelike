@@ -39,7 +39,6 @@ namespace Object
             {
                 Debug.LogWarning("Monster does not have hp bar as slider");
             }
-            
         }
 
         void Update()
