@@ -918,7 +918,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelGeneratorPrefab: {fileID: 114168227689263298, guid: b7822a41aec790a49888a0e3469438f9,
     type: 2}
-  MonsterPrefab: {fileID: 114165579247787602, guid: 74434ffdac2b5b64db8c372d7f5ec8f9,
+  MonsterPrefab: {fileID: 114644953875715564, guid: 74434ffdac2b5b64db8c372d7f5ec8f9,
     type: 2}
   Player: {fileID: 664390871}
   KillCountText: {fileID: 1907937710}
