@@ -44,47 +44,47 @@ namespace Object
 
         public Vector2Int? CheckMovement()
         {
-            if (Input.GetKeyUp("w"))
+            if (Input.GetKeyDown("w"))
             {
                 return new Vector2Int(0, 1);
             }
 
-            if (Input.GetKeyUp("a"))
+            if (Input.GetKeyDown("a"))
             {
                 return new Vector2Int(-1, 0);
             }
 
-            if (Input.GetKeyUp("s"))
+            if (Input.GetKeyDown("s"))
             {
                 return new Vector2Int(0, -1);
             }
 
-            if (Input.GetKeyUp("d"))
+            if (Input.GetKeyDown("d"))
             {
                 return new Vector2Int(1, 0);
             }
 
-            if (Input.GetKeyUp("q"))
+            if (Input.GetKeyDown("q"))
             {
                 return new Vector2Int(-1, 1);
             }
 
-            if (Input.GetKeyUp("e"))
+            if (Input.GetKeyDown("e"))
             {
                 return new Vector2Int(1, 1);
             }
 
-            if (Input.GetKeyUp("z"))
+            if (Input.GetKeyDown("z"))
             {
                 return new Vector2Int(-1, -1);
             }
 
-            if (Input.GetKeyUp("c"))
+            if (Input.GetKeyDown("c"))
             {
                 return new Vector2Int(1, -1);
             }
 
-            if (Input.GetKeyUp("space"))
+            if (Input.GetKeyDown("space"))
             {
                 return new Vector2Int(0, 0);
             }
