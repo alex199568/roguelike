@@ -433,18 +433,13 @@ public class LevelGenerator : MonoBehaviour
 
             if (xChanged && yChanged)
             {
-                var cell1 = CreateCellAt(i, j);
-                var cell2 = CreateCellAt(i - stepX, j);
-                var cell3 = CreateCellAt(i, j - stepY);
-
-                level.AddCell(cell1);
-                level.AddCell(cell2);
-                level.AddCell(cell3);
+                CreateCellAt(level, i, j);
+                CreateCellAt(level, i - stepX, j);
+                CreateCellAt(level, i, j - stepY);
             }
             else if (xChanged || yChanged)
             {
-                var cell = CreateCellAt(i, j);
-                level.AddCell(cell);
+                CreateCellAt(level, i, j);
             }
             else
             {
@@ -459,13 +454,18 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int j = position.yMin + 1; j < position.yMax; ++j)
             {
-                level.AddCell(CreateCellAt(i, j));
+                CreateCellAt(level, i, j);
             }
         }
     }
 
-    private Object.Cell CreateCellAt(int x, int y)
+    private void CreateCellAt(Level.Level level, int x, int y)
     {
+        var existingCell = level.GetCellAt(x, y);
+        if (existingCell != null)
+        {
+            return;
+        }
         Vector3 position = new Vector3
             (
             transform.position.x + x * cellWidth,
@@ -483,7 +483,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         cell.Location = new Vector2Int(x, y);
-        return cell;
+        level.AddCell(cell);
     }
 
     private struct GeneratedRoom
