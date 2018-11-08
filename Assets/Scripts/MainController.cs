@@ -12,6 +12,10 @@ public class MainController : MonoBehaviour
     public Object.Player Player;
     public Text KillCountText;
 
+    public Canvas PauseCanvas;
+    public Button ResumeButton;
+    public Button QuitButton;
+
     private LevelGenerator levelGeneratorInstance;
 
     private Level.Level level;
@@ -19,6 +23,7 @@ public class MainController : MonoBehaviour
     private System.Random random = new System.Random();
 
     private int kills = 0;
+    private bool isPaused = false;
 
     private void Awake()
     {
@@ -27,6 +32,10 @@ public class MainController : MonoBehaviour
 
     void Start()
     {
+        PauseCanvas.enabled = false;
+        ResumeButton.onClick.AddListener(OnResume);
+        QuitButton.onClick.AddListener(OnQuit);
+
         level = levelGeneratorInstance.GenerateLevel();
 
         PlacePlayer();
@@ -37,6 +46,13 @@ public class MainController : MonoBehaviour
 
     void Update()
     {
+        CheckEscape();
+
+        if (isPaused)
+        {
+            return;
+        }
+
         var playerMovement = Player.CheckMovement();
         if (playerMovement != null)
         {
@@ -150,5 +166,49 @@ public class MainController : MonoBehaviour
     private void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void CheckEscape()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (PauseCanvas.enabled)
+            {
+                Resume();
+            }
+            else
+            {
+                Pause();
+            }
+        }
+    }
+
+    private void Resume()
+    {
+        isPaused = false;
+        PauseCanvas.enabled = false;
+        Time.timeScale = 1f;
+    }
+
+    private void Pause()
+    {
+        isPaused = true;
+        PauseCanvas.enabled = true;
+        Time.timeScale = 0f;
+    }
+
+    void OnResume()
+    {
+        Resume();
+    }
+
+    void OnQuit()
+    {
+        Resume();
+#if UNITY_EDITOR
+        Debug.Log("Quit");
+#else
+        SceneManager.LoadScene("MainMenu");
+#endif
     }
 }
