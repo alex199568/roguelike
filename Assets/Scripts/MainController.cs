@@ -78,7 +78,7 @@ public class MainController : MonoBehaviour
                         level.RemoveMonster(monster);
                         if (level.MonsterCount == 0)
                         {
-                            Reload();
+                            LoadScene("Win");
                         }
                     }
                 }
@@ -123,7 +123,7 @@ public class MainController : MonoBehaviour
                     Player.TakeDamage(1);
                     if (Player.IsDead)
                     {
-                        Reload();
+                        LoadScene("Death");
                     }
                 }
                 else if (level.MoveMonster(monster, location))
@@ -163,11 +163,6 @@ public class MainController : MonoBehaviour
         Player.TargetPosition = position;
     }
 
-    private void Reload()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
     private void CheckEscape()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -195,6 +190,15 @@ public class MainController : MonoBehaviour
         isPaused = true;
         PauseCanvas.enabled = true;
         Time.timeScale = 0f;
+    }
+
+    private void LoadScene(string name)
+    {
+#if UNITY_EDITOR
+        Debug.Log($"Loading {name}");
+#else
+        SceneManager.LoadScene(name);
+#endif
     }
 
     void OnResume()
