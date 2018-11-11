@@ -84,6 +84,7 @@ public class MainController : MonoBehaviour
                     Player.Location = nextLocation;
                     Player.TargetPosition = levelGeneratorInstance.LocationToPosition(Player.Location);
                     UpdateCellsVisibility();
+                    GlobalState.Score += 1;
 
                     var nextLevel = level.NextLevel;
                     if (nextLevel.Location.x == nextLocation.x && nextLevel.Location.y == nextLocation.y)
@@ -93,9 +94,11 @@ public class MainController : MonoBehaviour
                 }
                 else
                 {
+                    GlobalState.Score += 2;
                     monster.TakeDamage(1);
                     if (monster.IsDead)
                     {
+                        GlobalState.Score += monster.MaxHp * 3 + monster.Attack * 2;
                         ++kills;
                         level.RemoveMonster(monster);
                         if (level.MonsterCount == 0)
@@ -128,6 +131,7 @@ public class MainController : MonoBehaviour
 
     private void LoadNextLevel()
     {
+        GlobalState.Score += 10;
         gameState.SetInt(HP_KEY, Player.Hp);
         gameState.SetInt(KILLS_KEY, kills);
         gameState.SetInt(LEVEL_KEY, gameState.GetInt(LEVEL_KEY, 1) + 1);
@@ -244,7 +248,7 @@ public class MainController : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"Loading {name}");
 #else
-        GameState.Reset();
+        gameState.Reset();
         SceneManager.LoadScene(name);
 #endif
     }
