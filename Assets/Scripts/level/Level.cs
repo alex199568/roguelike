@@ -10,14 +10,16 @@ namespace Level
 
         public List<RectInt> Rooms { set; get; } = new List<RectInt>();
 
-        public CustomGrid<Object.Cell> Cells { get; } = new CustomGrid<Object.Cell>();
+        public CustomGrid<LevelObject.Cell> Cells { get; } = new CustomGrid<LevelObject.Cell>();
 
-        public CustomGrid<Object.Monster> Monsters { get; } = new CustomGrid<Object.Monster>();
+        public CustomGrid<LevelObject.Monster> Monsters { get; } = new CustomGrid<LevelObject.Monster>();
 
         public RectInt RandomRoom
         {
             get { return Rooms[random.Next(Rooms.Count)]; }
         }
+
+        public LevelObject.NextLevel NextLevel { get; set; }
 
         public bool IsEmpty
         {
@@ -34,7 +36,7 @@ namespace Level
             Rooms.Add(room);
         }
 
-        public bool AddCell(Object.Cell cell)
+        public bool AddCell(LevelObject.Cell cell)
         {
             var existingCell = GetCellAt(cell.Location.x, cell.Location.y);
             if (existingCell != null)
@@ -53,14 +55,14 @@ namespace Level
             }
         }
 
-        public Object.Cell GetCellAt(int x, int y)
+        public LevelObject.Cell GetCellAt(int x, int y)
         {
             return Cells.GetAt(x, y);
         }
 
-        public List<Object.Cell> FindCellsInRange(Vector2Int origin, int range)
+        public List<LevelObject.Cell> FindCellsInRange(Vector2Int origin, int range)
         {
-            var result = new List<Object.Cell>();
+            var result = new List<LevelObject.Cell>();
             for (int i = origin.x - range; i <= origin.x + range; ++i)
             {
                 for (int j = origin.y - range; j <= origin.y + range; ++j)
@@ -75,7 +77,7 @@ namespace Level
             return result;
         }
 
-        public bool AddMonster(Object.Monster monster)
+        public bool AddMonster(LevelObject.Monster monster)
         {
             var cell = GetCellAt(monster.Location.x, monster.Location.y);
             var existingMonster = GetMonsterAt(monster.Location.x, monster.Location.y);
@@ -94,19 +96,19 @@ namespace Level
             return false;
         }
 
-        public Object.Monster GetMonsterAt(int x, int y)
+        public LevelObject.Monster GetMonsterAt(int x, int y)
         {
             return Monsters.GetAt(x, y);
         }
 
-        public void RemoveMonster(Object.Monster monster)
+        public void RemoveMonster(LevelObject.Monster monster)
         {
             Monsters.Remove(monster.Location.x, monster.Location.y, monster);
             Destroy(monster.gameObject);
             Destroy(monster);
         }
 
-        public bool MoveMonster(Object.Monster monster, Vector2Int to)
+        public bool MoveMonster(LevelObject.Monster monster, Vector2Int to)
         {
             var cell = GetCellAt(to.x, to.y);
             if (cell == null)
@@ -123,6 +125,25 @@ namespace Level
             Monsters.Remove(monster.Location.x, monster.Location.y);
             Monsters.AddExisting(to.x, to.y, monster);
             monster.Location = to;
+            return true;
+        }
+
+        public bool MonsterCanMove(Vector2Int to)
+        {
+            var cell = GetCellAt(to.x, to.y);
+            if (cell == null)
+            {
+                return false;
+            }
+            var monster = GetMonsterAt(to.x, to.y);
+            if (monster != null)
+            {
+                return false;
+            }
+            if (to.x == NextLevel.Location.x && to.y == NextLevel.Location.y)
+            {
+                return false;
+            }
             return true;
         }
     }

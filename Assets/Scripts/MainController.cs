@@ -6,15 +6,23 @@ using UnityEngine.SceneManagement;
 
 public class MainController : MonoBehaviour
 {
-    public LevelGenerator LevelGeneratorPrefab;
-    public Object.Monster[] MonsterPrefabs;
+    private const string HP_KEY = "hp";
+    private const string KILLS_KEY = "kills";
+    private const string LEVEL_KEY = "level";
 
-    public Object.Player Player;
+    public LevelGenerator LevelGeneratorPrefab;
+    public LevelObject.Monster[] MonsterPrefabs;
+    public LevelObject.NextLevel NextLevelPrefab;
+
+    public LevelObject.Player Player;
     public Text KillCountText;
+    public Text LevelText;
 
     public Canvas PauseCanvas;
     public Button ResumeButton;
     public Button QuitButton;
+
+    private GameState gameState;
 
     private LevelGenerator levelGeneratorInstance;
 
@@ -32,6 +40,12 @@ public class MainController : MonoBehaviour
 
     void Start()
     {
+        gameState = GameObject.FindObjectsOfType<GameState>()[0];
+        kills = gameState.GetInt(KILLS_KEY, 0);
+        Player.Hp = gameState.GetInt(HP_KEY, Player.Hp);
+
+        LevelText.text = $"Level: {gameState.GetInt(LEVEL_KEY, 1)}";
+
         PauseCanvas.enabled = false;
         ResumeButton.onClick.AddListener(OnResume);
         QuitButton.onClick.AddListener(OnQuit);
@@ -42,6 +56,8 @@ public class MainController : MonoBehaviour
         UpdateCellsVisibility();
 
         PlaceMonsters();
+
+        PlaceNextLevel();
     }
 
     void Update()
@@ -68,6 +84,12 @@ public class MainController : MonoBehaviour
                     Player.Location = nextLocation;
                     Player.TargetPosition = levelGeneratorInstance.LocationToPosition(Player.Location);
                     UpdateCellsVisibility();
+
+                    var nextLevel = level.NextLevel;
+                    if (nextLevel.Location.x == nextLocation.x && nextLevel.Location.y == nextLocation.y)
+                    {
+                        LoadNextLevel();
+                    }
                 }
                 else
                 {
@@ -86,6 +108,30 @@ public class MainController : MonoBehaviour
 
             UpdateMonsters();
         }
+    }
+
+    private void PlaceNextLevel()
+    {
+        var room = level.RandomRoom;
+        while (true)
+        {
+            var location = new Vector2Int(random.Next(room.xMin + 1, room.xMax), random.Next(room.yMin + 1, room.yMax));
+            if (level.GetMonsterAt(location.x, location.y) == null)
+            {
+                LevelObject.NextLevel nextLevel = Instantiate(NextLevelPrefab, levelGeneratorInstance.LocationToPosition(location), transform.rotation);
+                nextLevel.Location = location;
+                level.NextLevel = nextLevel;
+                break;
+            }
+        }
+    }
+
+    private void LoadNextLevel()
+    {
+        gameState.SetInt(HP_KEY, Player.Hp);
+        gameState.SetInt(KILLS_KEY, kills);
+        gameState.SetInt(LEVEL_KEY, gameState.GetInt(LEVEL_KEY, 1) + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void UpdateCellsVisibility()
@@ -144,7 +190,7 @@ public class MainController : MonoBehaviour
             var location = new Vector2Int(randomX, randomY);
             var position = levelGeneratorInstance.LocationToPosition(location);
             var randomMonster = MonsterPrefabs[random.Next(MonsterPrefabs.Length)];
-            Object.Monster monster = Instantiate(randomMonster, position, transform.rotation);
+            LevelObject.Monster monster = Instantiate(randomMonster, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
             level.AddMonster(monster);
@@ -198,6 +244,7 @@ public class MainController : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"Loading {name}");
 #else
+        GameState.Reset();
         SceneManager.LoadScene(name);
 #endif
     }
