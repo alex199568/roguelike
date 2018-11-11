@@ -13,23 +13,23 @@ namespace Object
         public Text HpText;
         public int VisionRange = 4;
 
-        private int hp;
-
         public Vector3 TargetPosition { get; set; }
+
+        public int Hp { get; set; }
 
         void Awake()
         {
-            hp = InitialHp;
+            Hp = InitialHp;
         }
 
         public void TakeDamage(int damage)
         {
-            hp -= damage;
+            Hp -= damage;
         }
 
         public bool IsDead
         {
-            get { return hp <= 0; }
+            get { return Hp <= 0; }
         }
 
         private void Update()
@@ -39,7 +39,7 @@ namespace Object
 
         private void LateUpdate()
         {
-            HpText.text = $"HP: {hp}";
+            HpText.text = $"HP: {Hp}";
         }
 
         public Vector2Int? CheckMovement()

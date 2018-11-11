@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class MainController : MonoBehaviour
 {
+    private const string HP_KEY = "hp";
+    private const string KILLS_KEY = "kills";
+
     public LevelGenerator LevelGeneratorPrefab;
     public Object.Monster[] MonsterPrefabs;
 
@@ -15,6 +18,8 @@ public class MainController : MonoBehaviour
     public Canvas PauseCanvas;
     public Button ResumeButton;
     public Button QuitButton;
+
+    private GameState gameState;
 
     private LevelGenerator levelGeneratorInstance;
 
@@ -32,6 +37,10 @@ public class MainController : MonoBehaviour
 
     void Start()
     {
+        gameState = GameObject.FindObjectsOfType<GameState>()[0];
+        kills = gameState.GetInt(KILLS_KEY, 0);
+        Player.Hp = gameState.GetInt(HP_KEY, Player.Hp);
+
         PauseCanvas.enabled = false;
         ResumeButton.onClick.AddListener(OnResume);
         QuitButton.onClick.AddListener(OnQuit);
@@ -85,6 +94,13 @@ public class MainController : MonoBehaviour
             }
 
             UpdateMonsters();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            gameState.SetInt(HP_KEY, Player.Hp);
+            gameState.SetInt(KILLS_KEY, kills);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -198,6 +214,7 @@ public class MainController : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"Loading {name}");
 #else
+        GameState.Reset();
         SceneManager.LoadScene(name);
 #endif
     }
