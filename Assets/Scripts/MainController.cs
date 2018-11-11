@@ -16,6 +16,7 @@ public class MainController : MonoBehaviour
 
     public LevelObject.Player Player;
     public Text KillCountText;
+    public Text LevelText;
 
     public Canvas PauseCanvas;
     public Button ResumeButton;
@@ -42,6 +43,8 @@ public class MainController : MonoBehaviour
         gameState = GameObject.FindObjectsOfType<GameState>()[0];
         kills = gameState.GetInt(KILLS_KEY, 0);
         Player.Hp = gameState.GetInt(HP_KEY, Player.Hp);
+
+        LevelText.text = $"Level: {gameState.GetInt(LEVEL_KEY, 1)}";
 
         PauseCanvas.enabled = false;
         ResumeButton.onClick.AddListener(OnResume);
