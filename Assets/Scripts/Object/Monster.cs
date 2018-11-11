@@ -12,9 +12,11 @@ namespace Object
 
         private int hp;
 
-        public int MaxHp = 2;
-        public float MovementSpeed = 3.2f;
+        public int MaxHp = 1;
         public int PlayerAwarenessDistance = 10;
+        public int Attack = 1;
+
+        public float MovementSpeed = 3.2f;
 
         public Vector3 TargetPosition { get; set; }
 
