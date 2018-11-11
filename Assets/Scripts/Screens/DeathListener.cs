@@ -9,10 +9,14 @@ public class DeathListener : MonoBehaviour
     public Button StartButton;
     public Button QuitButton;
 
+    public Text ScoreText;
+
     void Start()
     {
         StartButton.onClick.AddListener(StartGame);
         QuitButton.onClick.AddListener(Quit);
+
+        ScoreText.text = $"Score: {GlobalState.Score}";
     }
 
     void StartGame()

@@ -17,6 +17,7 @@ public class MainMenuListener : MonoBehaviour
     
     void StartGame()
     {
+        GlobalState.Score = 0;
 #if UNITY_EDITOR
         Debug.Log("Starting a new game");
 #else
