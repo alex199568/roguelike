@@ -39,7 +39,7 @@ public class LevelGenerator : MonoBehaviour
         return new Vector3
             (
             transform.position.x + location.x * cellWidth,
-            1.0f,
+            0.0f,
             transform.position.z + location.y * cellHeight
             );
     }
