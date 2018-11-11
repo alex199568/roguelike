@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class MainController : MonoBehaviour
 {
     public LevelGenerator LevelGeneratorPrefab;
-    public Object.Monster MonsterPrefab;
+    public Object.Monster[] MonsterPrefabs;
 
     public Object.Player Player;
     public Text KillCountText;
@@ -120,7 +120,7 @@ public class MainController : MonoBehaviour
                 var location = (Vector2Int)nextLocation;
                 if (location.x == Player.Location.x && location.y == Player.Location.y)
                 {
-                    Player.TakeDamage(1);
+                    Player.TakeDamage(monster.Attack);
                     if (Player.IsDead)
                     {
                         LoadScene("Death");
@@ -143,7 +143,8 @@ public class MainController : MonoBehaviour
             var randomY = random.Next(room.yMin + 1, room.yMax);
             var location = new Vector2Int(randomX, randomY);
             var position = levelGeneratorInstance.LocationToPosition(location);
-            Object.Monster monster = Instantiate(MonsterPrefab, position, transform.rotation);
+            var randomMonster = MonsterPrefabs[random.Next(MonsterPrefabs.Length)];
+            Object.Monster monster = Instantiate(randomMonster, position, transform.rotation);
             monster.TargetPosition = position;
             monster.Location = location;
             level.AddMonster(monster);
