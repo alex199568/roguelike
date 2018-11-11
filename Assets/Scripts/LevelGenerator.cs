@@ -9,7 +9,7 @@ public class LevelGenerator : MonoBehaviour
     public int MinRoomSize = 2;
     public int MaxRoomSize = 8;
     public int MaxRoomDisplacement = 5;
-    public Object.Cell CellPrefab;
+    public LevelObject.Cell CellPrefab;
     public GameObject BackgroundPrefab;
 
     private Vector2Int xBounds;
@@ -472,7 +472,7 @@ public class LevelGenerator : MonoBehaviour
             0.0f,
             transform.position.y + y * cellHeight
             );
-        Object.Cell cell = Instantiate(CellPrefab, position, transform.rotation);
+        LevelObject.Cell cell = Instantiate(CellPrefab, position, transform.rotation);
         foreach (Transform child in cell.transform)
         {
             if (child.CompareTag("Minimap"))

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Object
+namespace LevelObject
 {
     public class Monster : MonoBehaviour
     {
@@ -42,7 +42,7 @@ namespace Object
             hp -= damage;
         }
 
-        public Vector2Int? Move(Level.Level level, Object.Player player)
+        public Vector2Int? Move(Level.Level level, LevelObject.Player player)
         {
             Vector2Int? direction = null;
             if (CalculateDistance(player.Location) > PlayerAwarenessDistance)
@@ -122,10 +122,7 @@ namespace Object
             }
 
             var dir = (Vector2Int)direction;
-            var cell = level.GetCellAt(dir.x + Location.x, dir.y + Location.y);
-            var other = level.GetMonsterAt(dir.x + Location.x, dir.y + Location.y);
-
-            if (cell == null || other != null)
+            if (!level.MonsterCanMove(new Vector2Int(dir.x + Location.x, dir.y + Location.y)))
             {
                 return null;
             }
@@ -135,17 +132,13 @@ namespace Object
 
         private Vector2Int? RandomMove(Level.Level level)
         {
-            Cell cell;
-            Monster other;
             var tries = 100;
 
             while (true)
             {
                 var direction = new Vector2Int(random.Next(-1, 2), random.Next(-1, 2));
-                cell = level.GetCellAt(direction.x + Location.x, direction.y + Location.y);
-                other = level.GetMonsterAt(direction.x + Location.x, direction.y + Location.y);
 
-                if (cell != null && other == null)
+                if (level.MonsterCanMove(new Vector2Int(direction.x + Location.x, direction.y + Location.y)))
                 {
                     return direction;
                 }

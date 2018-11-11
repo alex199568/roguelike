@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-namespace Object
+namespace LevelObject
 {
     public class Player : MonoBehaviour
     {
