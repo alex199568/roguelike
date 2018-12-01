@@ -1426,7 +1426,7 @@ MonoBehaviour:
     type: 2}
   MonsterPrefabs:
   - {fileID: 114644953875715564, guid: 74434ffdac2b5b64db8c372d7f5ec8f9, type: 2}
-  NextLevelPrefab: {fileID: 114394429757292952, guid: b8c6dae082abbd447abac53974a5513f,
+  NextLevelPrefab: {fileID: 114398698894289530, guid: b8c6dae082abbd447abac53974a5513f,
     type: 2}
   Player: {fileID: 664390871}
   KillCountText: {fileID: 1907937710}
