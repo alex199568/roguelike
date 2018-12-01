@@ -189,15 +189,24 @@ public class MainController : MonoBehaviour
     {
         foreach (var room in level.Rooms)
         {
-            var randomX = random.Next(room.xMin + 1, room.xMax);
-            var randomY = random.Next(room.yMin + 1, room.yMax);
-            var location = new Vector2Int(randomX, randomY);
-            var position = levelGeneratorInstance.LocationToPosition(location);
-            var randomMonster = MonsterPrefabs[random.Next(MonsterPrefabs.Length)];
-            LevelObject.Monster monster = Instantiate(randomMonster, position, transform.rotation);
-            monster.TargetPosition = position;
-            monster.Location = location;
-            level.AddMonster(monster);
+            var numberOfMonsters = random.Next(2, 10);
+            for (int i = 0; i < numberOfMonsters; ++i)
+            {
+                var randomX = random.Next(room.xMin + 1, room.xMax);
+                var randomY = random.Next(room.yMin + 1, room.yMax);
+                var location = new Vector2Int(randomX, randomY);
+                var existingMonster = level.GetMonsterAt(randomX, randomY);
+                if (existingMonster != null)
+                {
+                    continue;
+                }
+                var position = levelGeneratorInstance.LocationToPosition(location);
+                var randomMonster = MonsterPrefabs[random.Next(MonsterPrefabs.Length)];
+                LevelObject.Monster monster = Instantiate(randomMonster, position, transform.rotation);
+                monster.TargetPosition = position;
+                monster.Location = location;
+                level.AddMonster(monster);
+            }
         }
     }
 
